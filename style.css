@@ -1,107 +1,67 @@
-/* Global styles */
 body {
-  font-family: 'Arial', sans-serif;
+  background-color: #0a0a0a;
+  color: #39ff14;
+  font-family: 'Segoe UI', sans-serif;
+  text-align: center;
   margin: 0;
   padding: 0;
-  background-color: #121212;
-  color: white;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 
 h1 {
-  font-size: 3rem;
-  color: #ff007f;
-  text-align: center;
-  margin-top: 20px;
+  font-size: 2em;
+  margin: 1em 0;
+  color: #ff00ff;
 }
 
-h2 {
-  font-size: 2rem;
-  color: #00ffcc;
-  text-align: center;
-  margin-top: 20px;
+.container {
+  padding: 1em;
 }
 
-/* Controls section */
 .controls {
-  background-color: rgba(255, 255, 255, 0.1);
-  padding: 20px;
-  margin-top: 20px;
-  border-radius: 8px;
+  margin-bottom: 1em;
 }
 
-.slider-group {
-  margin: 15px 0;
+label {
+  display: block;
+  margin: 0.5em 0;
+  color: #00ffff;
 }
 
 input[type="range"] {
-  width: 100%;
-  -webkit-appearance: none;
-  appearance: none;
-  background: #444;
-  height: 10px;
-  border-radius: 5px;
-}
-
-input[type="range"]:focus {
-  outline: none;
-}
-
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  background: #ff007f;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  cursor: pointer;
-}
-
-input[type="range"]::-webkit-slider-runnable-track {
-  background: #444;
+  width: 80%;
 }
 
 button {
-  background-color: #ff007f;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  margin: 10px;
-  border-radius: 5px;
+  padding: 0.5em 1em;
+  margin: 1em;
+  background-color: #222;
+  color: #39ff14;
+  border: 2px solid #39ff14;
+  font-size: 1em;
   cursor: pointer;
-  font-size: 1.2rem;
-  transition: background-color 0.3s;
+  border-radius: 10px;
+  transition: 0.3s;
 }
 
 button:hover {
-  background-color: #00ffcc;
+  background-color: #39ff14;
+  color: #000;
 }
 
-button:active {
-  background-color: #ff007f;
+#triangle {
+  display: flex;
+  justify-content: center;
+  margin-top: 2em;
 }
 
-/* Canvas and results section */
-.triangle {
-  margin-top: 40px;
+#triangleSvg text {
+  fill: #fff;
+  font-size: 18px;
+  font-weight: bold;
+  text-shadow: 0 0 5px #39ff14;
 }
 
-canvas {
-  border: 2px solid #00ffcc;
-  border-radius: 10px;
-}
-
-.results {
-  margin-top: 20px;
-  text-align: center;
-}
-
-pre {
-  background-color: #333;
-  padding: 20px;
-  border-radius: 8px;
-  color: #ff007f;
-  font-size: 1.2rem;
+#message {
+  margin-top: 1em;
+  color: #f0f;
 }
