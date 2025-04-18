@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ohton kolmio äppi</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main>
+    <h1>Ohton kolmio äppi</h1>
+
+    <section class="controls">
+      <div class="slider-group">
+        <label for="startRange">Alkunumero:</label>
+        <input type="range" id="startRange" min="1" max="99" value="1" />
+        <span id="startValue">1</span>
+      </div>
+
+      <div class="slider-group">
+        <label for="endRange">Loppunumero:</label>
+        <input type="range" id="endRange" min="1" max="99" value="10" />
+        <span id="endValue">10</span>
+      </div>
+
+      <div class="slider-group">
+        <label for="triangleSize">Sivun numeroiden määrä:</label>
+        <input type="range" id="triangleSize" min="3" max="5" value="3" />
+        <span id="triangleSizeValue">3</span>
+      </div>
+
+      <div class="slider-group">
+        <label for="targetSum">Sivun tavoitesumma:</label>
+        <input type="range" id="targetSum" min="3" max="99" value="15" />
+        <span id="targetSumValue">15</span>
+      </div>
+
+      <button id="solveButton">Ratkaise</button>
+      <button id="resetButton">Tyhjennä</button>
+    </section>
+
+    <section class="triangle">
+      <canvas id="triangleCanvas" width="600" height="520"></canvas>
+    </section>
+
+    <section class="results">
+      <h2>Tulokset</h2>
+      <pre id="resultOutput">Ei vielä tuloksia.</pre>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
