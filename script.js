@@ -73,7 +73,7 @@ document.getElementById("solveButton").addEventListener("click", () => {
     resultDiv.innerHTML = `<p style="color: #f55;">Ratkaisua ei löytynyt!</p>`;
     const suggestions = [...possibleSums].filter(s => s !== targetSum).slice(0, 3);
     if (suggestions.length > 0) {
-      resultDiv.innerHTML += `<p>Mahdollisia summia joita voit kokeilla:</p><ul style="margin-top: 5px; padding-left: 18px;">${suggestions.map(s => `<li style="margin: 2px 0;">${s}</li>`).join('')}</ul>`;
+      resultDiv.innerHTML += `<p>Mahdollisia summia joita voit kokeilla:</p><ul style="margin: 5px 0 0 15px; padding-left: 10px; list-style-position: inside;">${suggestions.map(s => `<li style="margin: 1px 0;">${s}</li>`).join('')}</ul>`;
     }
     clearTriangle();
   }
