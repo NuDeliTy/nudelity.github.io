@@ -39,32 +39,32 @@ document.getElementById("solveButton").addEventListener("click", () => {
     numbers.push(i);
   }
 
-  const needed = sideCount * 3 - 3;
   let found = false;
   const possibleSums = new Set();
 
-  function permute(arr, len, current = []) {
-    if (found) return;
+  const totalNeeded = sideCount * 3 - 3; // shared corners
+
+  function combinations(arr, len, current = [], used = {}) {
     if (current.length === len) {
-      const total = current.slice();
-      const cornerA = total[0];
-      const cornerB = total[sideCount - 1];
-      const cornerC = total[2 * sideCount - 2];
+      const [a, b, ...rest] = current;
 
-      const side1 = total.slice(0, sideCount);
-      const side2 = [cornerB, ...total.slice(sideCount, 2 * sideCount - 2), cornerC];
-      const side3 = [cornerC, ...total.slice(2 * sideCount - 2, 3 * sideCount - 3), cornerA];
+      const x = [a, ...rest.slice(0, sideCount - 2), b];
+      const y = [b, ...rest.slice(sideCount - 2, 2 * sideCount - 4), a];
+      const z = [a, ...rest.slice(2 * sideCount - 4)];
 
-      const sum1 = side1.reduce((a, b) => a + b, 0);
-      const sum2 = side2.reduce((a, b) => a + b, 0);
-      const sum3 = side3.reduce((a, b) => a + b, 0);
+      const sumX = x.reduce((a, b) => a + b, 0);
+      const sumY = y.reduce((a, b) => a + b, 0);
+      const sumZ = z.reduce((a, b) => a + b, 0);
 
-      if (sum1 === sum2 && sum2 === sum3) {
-        possibleSums.add(sum1);
-        if (sum1 === targetSum) {
-          drawTriangle(side1, side2, side3);
-          resultDiv.innerHTML = `<p>🎉 Ratkaisu löytyi!</p><p>x = [${side1.join(', ')}]</p><p>y = [${side2.join(', ')}]</p><p>z = [${side3.join(', ')}]</p>`;
+      if (sumX === sumY && sumY === sumZ) {
+        possibleSums.add(sumX);
+        if (sumX === targetSum && !found) {
           found = true;
+          drawTriangle(x, y, z);
+          resultDiv.innerHTML = `<p>🎉 Ratkaisu löytyi!</p>
+            <p>x = [${x.join(", ")}]</p>
+            <p>y = [${y.join(", ")}]</p>
+            <p>z = [${z.join(", ")}]</p>`;
           successSound.play();
         }
       }
@@ -72,21 +72,23 @@ document.getElementById("solveButton").addEventListener("click", () => {
     }
 
     for (let i = 0; i < arr.length; i++) {
-      if (!current.includes(arr[i])) {
-        permute(arr, len, [...current, arr[i]]);
+      const num = arr[i];
+      if (!used[num]) {
+        used[num] = true;
+        combinations(arr, len, [...current, num], { ...used });
       }
     }
   }
 
-  permute(numbers, needed);
+  combinations(numbers, totalNeeded);
 
   if (!found) {
+    failSound.play();
     resultDiv.innerHTML = `<p style="color:#f55;">Ratkaisua ei löytynyt!</p>`;
     const suggestions = [...possibleSums].filter(s => s !== targetSum).slice(0, 3);
     if (suggestions.length > 0) {
-      resultDiv.innerHTML += `<p>Mahdollisia summia joita voit kokeilla:</p><ul>${suggestions.map(s => `<li>${s}</li>`).join('')}</ul>`;
+      resultDiv.innerHTML += `<p>Mahdollisia summia joita voit kokeilla:</p><ul style="list-style-position: inside; padding-left: 0;">${suggestions.map(s => `<li>${s}</li>`).join('')}</ul>`;
     }
-    failSound.play();
     clearTriangle();
   }
 });
@@ -123,15 +125,13 @@ function drawSideNumbers(p1, p2, nums, side) {
     const x = p1.x + dx * i;
     const y = p1.y + dy * i;
     ctx.fillStyle = "#0f0";
-    ctx.font = "bold 18px monospace";
+    ctx.font = "bold 20px monospace";
     let offsetX = -10;
     let offsetY = -10;
-
-    if (i === 0 || i === nums.length - 1) {
-      offsetX = i === 0 ? -18 : 8;
-      offsetY = side === 'bottom' ? -12 : 16;
+    if ((i === 0 || i === nums.length - 1)) {
+      offsetX += (side === 'left') ? -10 : (side === 'right' ? 10 : 0);
+      offsetY += (side === 'bottom') ? -15 : 15;
     }
-
     ctx.fillText(nums[i], x + offsetX, y + offsetY);
   }
 }
