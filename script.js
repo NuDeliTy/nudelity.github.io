@@ -90,7 +90,8 @@ function drawTriangle(sides) {
     { x: canvas.width - 100, y: canvas.height - 100 }
   ];
 
-  ctx.strokeStyle = '#0ff';
+  // Draw triangle
+  ctx.strokeStyle = '#0ff'; // Triangle color (neon)
   ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.moveTo(points[0].x, points[0].y);
@@ -102,11 +103,17 @@ function drawTriangle(sides) {
   const drawSide = (start, end, nums) => {
     for (let i = 0; i < nums.length; i++) {
       const t = i / (nums.length - 1);
-      const x = start.x + (end.x - start.x) * t;
-      const y = start.y + (end.y - start.y) * t;
-      ctx.fillStyle = '#0ff';
+      const xPos = start.x + (end.x - start.x) * t;
+      const yPos = start.y + (end.y - start.y) * t;
+
+      // Adjust position slightly to make sure numbers are outside of the triangle lines
+      const offset = 15; // Offset value for positioning numbers outside
+      const textX = xPos + (xPos < canvas.width / 2 ? -offset : offset);
+      const textY = yPos + (yPos < canvas.height / 2 ? -offset : offset);
+
+      ctx.fillStyle = '#fff'; // White color for the numbers
       ctx.font = '16px Arial';
-      ctx.fillText(nums[i], x - 10, y);
+      ctx.fillText(nums[i], textX - 10, textY);
     }
   };
 
