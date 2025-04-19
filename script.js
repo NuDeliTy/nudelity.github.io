@@ -12,8 +12,12 @@ const canvas = document.getElementById("triangleCanvas");
 const ctx = canvas.getContext("2d");
 const resultDiv = document.getElementById("result");
 
-const successSound = document.getElementById("soundSuccess");
-const failSound = document.getElementById("soundFail");
+const successSound = new Audio("sounds/success.wav");
+const failSound = new Audio("sounds/fail.wav");
+
+[sideSlider, rangeStartSlider, rangeEndSlider, targetSumSlider].forEach(slider => {
+  slider.addEventListener("input", updateSliderLabels);
+});
 
 function updateSliderLabels() {
   sideVal.textContent = sideSlider.value;
@@ -21,10 +25,6 @@ function updateSliderLabels() {
   endVal.textContent = rangeEndSlider.value;
   targetVal.textContent = targetSumSlider.value;
 }
-
-[sideSlider, rangeStartSlider, rangeEndSlider, targetSumSlider].forEach(slider => {
-  slider.addEventListener("input", updateSliderLabels);
-});
 
 updateSliderLabels();
 
@@ -44,22 +44,23 @@ document.getElementById("solveButton").addEventListener("click", () => {
 
   function permute(arr, len, current = []) {
     if (current.length === len) {
-      const [x0, y0, z0, x1, y1, z1] = current;
-      const x = [x0, x1, z0];
-      const y = [y0, y1, x0];
-      const z = [z0, z1, y0];
-      const sumX = x.reduce((a, b) => a + b, 0);
-      const sumY = y.reduce((a, b) => a + b, 0);
-      const sumZ = z.reduce((a, b) => a + b, 0);
+      const [a, b, c, d, e, f] = current;
+
+      const x = [a, b, c]; // left side from top to bottom
+      const y = [c, d, e]; // bottom side from left to right
+      const z = [e, f, a]; // right side from bottom to top
+
+      const sumX = x.reduce((acc, val) => acc + val, 0);
+      const sumY = y.reduce((acc, val) => acc + val, 0);
+      const sumZ = z.reduce((acc, val) => acc + val, 0);
 
       if (sumX === sumY && sumY === sumZ) {
         possibleSums.add(sumX);
         if (sumX === targetSum && !found) {
           drawTriangle(x, y, z);
           resultDiv.innerHTML = `<p>🎉 Ratkaisu löytyi!</p><p>x = [${x.join(', ')}]</p><p>y = [${y.join(', ')}]</p><p>z = [${z.join(', ')}]</p>`;
-          found = true;
           successSound.play();
-          triggerAnimation();
+          found = true;
         }
       }
       return;
@@ -75,13 +76,13 @@ document.getElementById("solveButton").addEventListener("click", () => {
   permute(numbers, 6);
 
   if (!found) {
-    resultDiv.innerHTML = `<p style="color: #f55;">🚫 Ratkaisua ei löytynyt!</p>`;
+    resultDiv.innerHTML = `<p style="color: #f55;">Ratkaisua ei löytynyt!</p>`;
     const suggestions = [...possibleSums].filter(s => s !== targetSum).slice(0, 3);
     if (suggestions.length > 0) {
-      resultDiv.innerHTML += `<p>Mahdollisia summia joita voit kokeilla:</p><ul style="margin-top: 5px; margin-left: 5px;">${suggestions.map(s => `<li>${s}</li>`).join('')}</ul>`;
+      resultDiv.innerHTML += `<p>Mahdollisia summia joita voit kokeilla:</p><ul style="margin-top: 5px; margin-left: 5px;">${suggestions.map(s => `<li style="margin: 2px 0;">• ${s}</li>`).join('')}</ul>`;
     }
-    failSound.play();
     clearTriangle();
+    failSound.play();
   }
 });
 
@@ -104,44 +105,30 @@ function drawTriangle(x, y, z) {
   ctx.lineWidth = 3;
   ctx.stroke();
 
-  // Draw corner numbers once
-  drawCornerNumber(A.x, A.y, x[0]); // Top
-  drawCornerNumber(B.x, B.y, x[2]); // Left
-  drawCornerNumber(C.x, C.y, y[2]); // Right
-
-  drawSideNumbers(A, B, x.slice(1, 2)); // Middle of side AB
-  drawSideNumbers(B, C, y.slice(1, 2)); // Middle of side BC
-  drawSideNumbers(C, A, z.slice(1, 2)); // Middle of side CA
+  drawSideNumbers(A, B, x, 'left');
+  drawSideNumbers(B, C, y, 'bottom');
+  drawSideNumbers(C, A, z.reverse(), 'right');
 }
 
-function drawCornerNumber(x, y, num) {
-  ctx.fillStyle = "#ff0";
-  ctx.font = "bold 22px sans-serif";
-  ctx.fillText(num, x - 10, y - 10);
-}
-
-function drawSideNumbers(p1, p2, nums) {
-  if (nums.length === 0) return;
-
-  const dx = (p2.x - p1.x) / (nums.length + 1);
-  const dy = (p2.y - p1.y) / (nums.length + 1);
+function drawSideNumbers(p1, p2, nums, side) {
+  const dx = (p2.x - p1.x) / (nums.length - 1);
+  const dy = (p2.y - p1.y) / (nums.length - 1);
 
   for (let i = 0; i < nums.length; i++) {
-    const x = p1.x + dx * (i + 1);
-    const y = p1.y + dy * (i + 1);
+    const x = p1.x + dx * i;
+    const y = p1.y + dy * i;
     ctx.fillStyle = "#0f0";
     ctx.font = "bold 20px sans-serif";
-    ctx.fillText(nums[i], x - 10, y - 10);
+    let offsetX = -10;
+    let offsetY = 6;
+    if (i === 0 || i === nums.length - 1) {
+      offsetX = side === 'left' ? -18 : side === 'right' ? 8 : -10;
+      offsetY = side === 'bottom' ? -10 : 10;
+    }
+    ctx.fillText(nums[i], x + offsetX, y + offsetY);
   }
 }
 
 function clearTriangle() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-}
-
-function triggerAnimation() {
-  canvas.classList.add("flash");
-  setTimeout(() => {
-    canvas.classList.remove("flash");
-  }, 300);
 }
