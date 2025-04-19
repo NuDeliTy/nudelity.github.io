@@ -1,42 +1,28 @@
 body {
   background-color: #111;
   color: #0ff;
-  font-family: "Courier New", Courier, monospace;
+  font-family: 'Courier New', Courier, monospace;
   text-align: center;
-  margin: 0;
   padding: 20px;
 }
 
 .container {
-  max-width: 600px;
-  margin: auto;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+label {
+  display: block;
+  margin: 10px 0;
 }
 
 input[type="range"] {
   width: 100%;
-  margin: 10px 0;
 }
 
 canvas {
+  background-color: #222;
   margin-top: 20px;
   border: 2px solid #0ff;
-  background-color: #000;
-}
-
-#result {
-  margin-top: 20px;
-  color: #0f0;
-  font-size: 1.2em;
-}
-
-ul {
-  list-style-type: none;
-  padding-left: 0;
-  color: #ff0;
-}
-
-ul li::before {
-  content: "• ";
-  color: #f0f;
-  margin-right: 5px;
+  border-radius: 10px;
 }
