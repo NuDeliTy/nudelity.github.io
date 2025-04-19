@@ -2,37 +2,35 @@
 <html lang="fi">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Ohton kolmio äppi</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="container">
-    <h1>Ohton kolmio äppi</h1>
+  <h1>Ohton kolmio äppi 🎲</h1>
 
-    <label>Sivun numeroiden määrä: <span id="sideCountVal"></span>
-      <input type="range" id="sideCount" min="3" max="5" value="3" />
+  <div class="sliders">
+    <label>Sivun numeroiden määrä: <span id="sideCountVal">3</span>
+      <input id="sideCount" type="range" min="3" max="5" value="3" />
     </label>
-
-    <label>Alkuarvo: <span id="rangeStartVal"></span>
-      <input type="range" id="rangeStart" min="1" max="20" value="1" />
+    <label>Alku: <span id="rangeStartVal">1</span>
+      <input id="rangeStart" type="range" min="1" max="9" value="1" />
     </label>
-
-    <label>Loppuarvo: <span id="rangeEndVal"></span>
-      <input type="range" id="rangeEnd" min="1" max="20" value="10" />
+    <label>Loppu: <span id="rangeEndVal">9</span>
+      <input id="rangeEnd" type="range" min="1" max="20" value="9" />
     </label>
-
-    <label>Kohdesumma: <span id="targetSumVal"></span>
-      <input type="range" id="targetSum" min="3" max="100" value="15" />
+    <label>Kohdesumma: <span id="targetSumVal">15</span>
+      <input id="targetSum" type="range" min="3" max="60" value="15" />
     </label>
-
-    <button id="solveButton">Etsi ratkaisu</button>
-    <canvas id="triangleCanvas" width="500" height="500"></canvas>
-    <div id="result"></div>
   </div>
 
-  <audio id="successSound" src="https://freesound.org/data/previews/341/341695_3248244-lq.mp3"></audio>
-  <audio id="failSound" src="https://freesound.org/data/previews/198/198841_285997-lq.mp3"></audio>
+  <button id="solveButton">Ratkaise 🔍</button>
+
+  <canvas id="triangleCanvas" width="600" height="500"></canvas>
+
+  <div id="result"></div>
+
+  <audio id="successSound" src="https://freesound.org/data/previews/341/341695_3248244-lq.mp3" preload="auto"></audio>
+  <audio id="failSound" src="https://freesound.org/data/previews/256/256113_3263906-lq.mp3" preload="auto"></audio>
 
   <script src="script.js"></script>
 </body>
