@@ -2,37 +2,32 @@
 <html lang="fi">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Ohton kolmio äppi</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="app">
+  <div class="container">
     <h1>Ohton kolmio äppi</h1>
 
-    <div class="sliders">
-      <label>Sivun numeroiden määrä: <span id="sideCountVal"></span>
-        <input type="range" id="sideCount" min="3" max="5" value="3" />
-      </label>
-      <label>Numeroiden vaihteluväli:
-        <span id="rangeStartVal"></span> -
-        <span id="rangeEndVal"></span><br />
-        <input type="range" id="rangeStart" min="1" max="20" value="2" />
-        <input type="range" id="rangeEnd" min="1" max="20" value="7" />
-      </label>
-      <label>Sivun tavoitesumma: <span id="targetSumVal"></span>
-        <input type="range" id="targetSum" min="3" max="60" value="12" />
-      </label>
-    </div>
+    <label>Sivun numeroiden määrä: <span id="sideCountVal">3</span></label>
+    <input type="range" id="sideCount" min="3" max="5" value="3" />
+
+    <label>Luvut väliltä: <span id="rangeStartVal">1</span> - <span id="rangeEndVal">9</span></label>
+    <input type="range" id="rangeStart" min="1" max="20" value="1" />
+    <input type="range" id="rangeEnd" min="5" max="30" value="9" />
+
+    <label>Tavoitesumma: <span id="targetSumVal">10</span></label>
+    <input type="range" id="targetSum" min="3" max="60" value="10" />
 
     <button id="solveButton">Ratkaise</button>
 
-    <canvas id="triangleCanvas" width="600" height="600"></canvas>
-
+    <canvas id="triangleCanvas" width="500" height="500"></canvas>
     <div id="result"></div>
-
-    <audio id="soundSuccess" src="https://cdn.freesound.org/previews/769/769816_12755346-lq.mp3" preload="auto"></audio>
-    <audio id="soundFail" src="https://cdn.freesound.org/previews/270/270334_5123851-lq.mp3" preload="auto"></audio>
   </div>
+
+  <audio id="successSound" src="https://freesound.org/data/previews/341/341695_3248244-lq.mp3"></audio>
+  <audio id="failSound" src="https://freesound.org/data/previews/331/331912_3248244-lq.mp3"></audio>
 
   <script src="script.js"></script>
 </body>
