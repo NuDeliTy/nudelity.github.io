@@ -2,32 +2,35 @@
 <html lang="fi">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ohton kolmio äppi</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
     <h1>Ohton kolmio äppi</h1>
+    
+    <div class="slider-group">
+      <label for="sideCount">Sivun numeroiden määrä: <span id="sideCountVal">3</span></label>
+      <input type="range" id="sideCount" min="3" max="5" value="3" />
+      
+      <label for="rangeStart">Numerovälin alku: <span id="rangeStartVal">1</span></label>
+      <input type="range" id="rangeStart" min="1" max="20" value="1" />
 
-    <div class="controls">
-      <label for="rangeStart">Alku: <span id="startVal">2</span></label>
-      <input type="range" id="rangeStart" min="1" max="20" value="2">
-      
-      <label for="rangeEnd">Loppu: <span id="endVal">7</span></label>
-      <input type="range" id="rangeEnd" min="1" max="20" value="7">
-      
-      <label for="targetSum">Sivun summa: <span id="sumVal">12</span></label>
-      <input type="range" id="targetSum" min="3" max="60" value="12">
+      <label for="rangeEnd">Numerovälin loppu: <span id="rangeEndVal">9</span></label>
+      <input type="range" id="rangeEnd" min="2" max="30" value="9" />
+
+      <label for="targetSum">Tavoitesumma: <span id="targetSumVal">12</span></label>
+      <input type="range" id="targetSum" min="3" max="90" value="12" />
     </div>
 
-    <button id="solveBtn">Ratkaise</button>
+    <button id="solveButton">Etsi ratkaisu</button>
 
-    <div id="triangle">
-      <svg id="triangleSvg" viewBox="0 0 300 260"></svg>
+    <div id="triangleContainer">
+      <canvas id="triangleCanvas" width="600" height="520"></canvas>
     </div>
 
-    <div id="message"></div>
+    <div id="result"></div>
   </div>
 
   <script src="script.js"></script>
