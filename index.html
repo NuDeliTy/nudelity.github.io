@@ -2,35 +2,76 @@
 <html lang="fi">
 <head>
   <meta charset="UTF-8" />
-  <title>Ohton kolmio äppi</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ohton Kolmio Äppi</title>
+  <style>
+    body {
+      margin: 0;
+      background: #111;
+      color: #0ff;
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+    canvas {
+      border: 2px solid #0ff;
+      margin-top: 20px;
+    }
+    #controls {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .slider-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    input[type=range] {
+      width: 200px;
+    }
+    #result {
+      margin-top: 10px;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
-  <h1>Ohton kolmio äppi 🎲</h1>
-
-  <div class="sliders">
-    <label>Sivun numeroiden määrä: <span id="sideCountVal">3</span>
-      <input id="sideCount" type="range" min="3" max="5" value="3" />
-    </label>
-    <label>Alku: <span id="rangeStartVal">1</span>
-      <input id="rangeStart" type="range" min="1" max="9" value="1" />
-    </label>
-    <label>Loppu: <span id="rangeEndVal">9</span>
-      <input id="rangeEnd" type="range" min="1" max="20" value="9" />
-    </label>
-    <label>Kohdesumma: <span id="targetSumVal">15</span>
-      <input id="targetSum" type="range" min="3" max="60" value="15" />
-    </label>
+  <div id="controls">
+    <div class="slider-group">
+      <label for="sideCount">Sivun numeroiden määrä:</label>
+      <input type="range" id="sideCount" min="3" max="6" value="3">
+      <span id="sideCountVal">3</span>
+    </div>
+    <div class="slider-group">
+      <label for="rangeStart">Alku:</label>
+      <input type="range" id="rangeStart" min="1" max="20" value="1">
+      <span id="rangeStartVal">1</span>
+    </div>
+    <div class="slider-group">
+      <label for="rangeEnd">Loppu:</label>
+      <input type="range" id="rangeEnd" min="1" max="20" value="10">
+      <span id="rangeEndVal">10</span>
+    </div>
+    <div class="slider-group">
+      <label for="targetSum">Tavoitesumma:</label>
+      <input type="range" id="targetSum" min="3" max="60" value="15">
+      <span id="targetSumVal">15</span>
+    </div>
+    <button id="solveButton">Ratkaise</button>
   </div>
 
-  <button id="solveButton">Ratkaise 🔍</button>
-
-  <canvas id="triangleCanvas" width="600" height="500"></canvas>
-
+  <canvas id="triangleCanvas" width="500" height="500"></canvas>
   <div id="result"></div>
 
-  <audio id="successSound" src="https://cdn.freesound.org/previews/769/769816_12755346-lq.mp3" preload="auto"></audio>
-  <audio id="failSound" src="https://cdn.freesound.org/previews/270/270334_5123851-lq.mp3" preload="auto"></audio>
+  <audio id="winSound" src="https://cdn.freesound.org/previews/769/769816_12755346-lq.mp3"></audio>
+  <audio id="failSound" src="https://cdn.freesound.org/previews/270/270334_5123851-lq.mp3"></audio>
 
   <script src="script.js"></script>
 </body>
