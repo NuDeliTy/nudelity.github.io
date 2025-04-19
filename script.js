@@ -102,27 +102,36 @@ function drawTriangle(x, y, z) {
   ctx.closePath();
   ctx.strokeStyle = "#0ff";
   ctx.lineWidth = 3;
-  ctx.shadowColor = "#0ff";
-  ctx.shadowBlur = 20;
   ctx.stroke();
 
-  drawSideNumbers(A, B, x, 'left');
-  drawSideNumbers(B, C, y, 'bottom');
-  drawSideNumbers(C, A, z, 'right');
+  // Draw corner numbers once
+  drawCornerNumber(A.x, A.y, x[0]); // Top
+  drawCornerNumber(B.x, B.y, x[2]); // Left
+  drawCornerNumber(C.x, C.y, y[2]); // Right
+
+  drawSideNumbers(A, B, x.slice(1, 2)); // Middle of side AB
+  drawSideNumbers(B, C, y.slice(1, 2)); // Middle of side BC
+  drawSideNumbers(C, A, z.slice(1, 2)); // Middle of side CA
 }
 
-function drawSideNumbers(p1, p2, nums, side) {
-  const dx = (p2.x - p1.x) / (nums.length - 1);
-  const dy = (p2.y - p1.y) / (nums.length - 1);
+function drawCornerNumber(x, y, num) {
+  ctx.fillStyle = "#ff0";
+  ctx.font = "bold 22px sans-serif";
+  ctx.fillText(num, x - 10, y - 10);
+}
+
+function drawSideNumbers(p1, p2, nums) {
+  if (nums.length === 0) return;
+
+  const dx = (p2.x - p1.x) / (nums.length + 1);
+  const dy = (p2.y - p1.y) / (nums.length + 1);
 
   for (let i = 0; i < nums.length; i++) {
-    const x = p1.x + dx * i;
-    const y = p1.y + dy * i;
+    const x = p1.x + dx * (i + 1);
+    const y = p1.y + dy * (i + 1);
     ctx.fillStyle = "#0f0";
-    ctx.font = "bold 20px monospace";
-    let offsetX = -10;
-    let offsetY = -10;
-    ctx.fillText(nums[i], x + offsetX, y + offsetY);
+    ctx.font = "bold 20px sans-serif";
+    ctx.fillText(nums[i], x - 10, y - 10);
   }
 }
 
