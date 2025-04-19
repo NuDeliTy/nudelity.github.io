@@ -10,24 +10,29 @@
   <div class="container">
     <h1>Ohton kolmio äppi</h1>
 
-    <label>Sivun numeroiden määrä: <span id="sideCountVal">3</span></label>
-    <input type="range" id="sideCount" min="3" max="5" value="3" />
+    <label>Sivun numeroiden määrä: <span id="sideCountVal"></span>
+      <input type="range" id="sideCount" min="3" max="5" value="3" />
+    </label>
 
-    <label>Luvut väliltä: <span id="rangeStartVal">1</span> - <span id="rangeEndVal">9</span></label>
-    <input type="range" id="rangeStart" min="1" max="20" value="1" />
-    <input type="range" id="rangeEnd" min="5" max="30" value="9" />
+    <label>Alkuarvo: <span id="rangeStartVal"></span>
+      <input type="range" id="rangeStart" min="1" max="20" value="1" />
+    </label>
 
-    <label>Tavoitesumma: <span id="targetSumVal">10</span></label>
-    <input type="range" id="targetSum" min="3" max="60" value="10" />
+    <label>Loppuarvo: <span id="rangeEndVal"></span>
+      <input type="range" id="rangeEnd" min="1" max="20" value="10" />
+    </label>
 
-    <button id="solveButton">Ratkaise</button>
+    <label>Kohdesumma: <span id="targetSumVal"></span>
+      <input type="range" id="targetSum" min="3" max="100" value="15" />
+    </label>
 
+    <button id="solveButton">Etsi ratkaisu</button>
     <canvas id="triangleCanvas" width="500" height="500"></canvas>
     <div id="result"></div>
   </div>
 
   <audio id="successSound" src="https://freesound.org/data/previews/341/341695_3248244-lq.mp3"></audio>
-  <audio id="failSound" src="https://freesound.org/data/previews/331/331912_3248244-lq.mp3"></audio>
+  <audio id="failSound" src="https://freesound.org/data/previews/198/198841_285997-lq.mp3"></audio>
 
   <script src="script.js"></script>
 </body>
