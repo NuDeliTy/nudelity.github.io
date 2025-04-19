@@ -12,8 +12,14 @@ const canvas = document.getElementById("triangleCanvas");
 const ctx = canvas.getContext("2d");
 const resultDiv = document.getElementById("result");
 
-const successSound = new Audio("sounds/success.wav");
-const failSound = new Audio("sounds/fail.wav");
+const winSound = document.getElementById("winSound");
+const failSound = document.getElementById("failSound");
+
+if (found) {
+  winSound.play(); // Play the win sound when a solution is found
+} else {
+  failSound.play(); // Play the fail sound when no solution is found
+}
 
 [sideSlider, rangeStartSlider, rangeEndSlider, targetSumSlider].forEach(slider => {
   slider.addEventListener("input", updateSliderLabels);
