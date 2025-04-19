@@ -33,30 +33,48 @@ function solveTriangle(n, start, end, target) {
   const nums = [];
   for (let i = start; i <= end; i++) nums.push(i);
 
+  const combinations = getCombinations(nums, n);
   let found = false;
   let solution = null;
-  const combinations = getCombinations(nums, n);
 
   for (let a of combinations) {
     for (let b of combinations) {
       for (let c of combinations) {
-        const sharedAB = a[a.length - 1];
-        const sharedBC = b[b.length - 1];
-        const sharedCA = c[c.length - 1];
+        if (a[n - 1] !== b[0]) continue;
+        if (b[n - 1] !== c[0]) continue;
+        if (c[n - 1] !== a[0]) continue;
 
-        // Ensure unique numbers for the sides, except for shared corners
-        const uniqueNumbers = new Set([...a, ...b, ...c]);
+        const shared = [a[n - 1], b[n - 1], c[n - 1]];
+        const allNumbers = [...a, ...b.slice(1), ...c.slice(1)]; // avoid double counting shared corners
+        const numCounts = {};
 
-        if (sharedAB === b[0] && sharedBC === c[0] && sharedCA === a[0] && uniqueNumbers.size === 3) {
-          const sumA = a.reduce((x, y) => x + y, 0);
-          const sumB = b.reduce((x, y) => x + y, 0);
-          const sumC = c.reduce((x, y) => x + y, 0);
+        allNumbers.forEach(num => {
+          numCounts[num] = (numCounts[num] || 0) + 1;
+        });
 
-          if (sumA === target && sumB === target && sumC === target) {
-            found = true;
-            solution = [a, b, c];
-            break;
+        let valid = true;
+        for (let num in numCounts) {
+          if (shared.includes(Number(num))) {
+            if (numCounts[num] > 2) {
+              valid = false;
+              break;
+            }
+          } else {
+            if (numCounts[num] > 1) {
+              valid = false;
+              break;
+            }
           }
+        }
+
+        const sumA = a.reduce((x, y) => x + y, 0);
+        const sumB = b.reduce((x, y) => x + y, 0);
+        const sumC = c.reduce((x, y) => x + y, 0);
+
+        if (valid && sumA === target && sumB === target && sumC === target) {
+          found = true;
+          solution = [a, b, c];
+          break;
         }
       }
       if (found) break;
@@ -76,6 +94,7 @@ function solveTriangle(n, start, end, target) {
     failSound.play();
   }
 }
+
 
 
 
