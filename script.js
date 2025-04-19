@@ -12,9 +12,8 @@ const canvas = document.getElementById("triangleCanvas");
 const ctx = canvas.getContext("2d");
 const resultDiv = document.getElementById("result");
 
-[sideSlider, rangeStartSlider, rangeEndSlider, targetSumSlider].forEach(slider => {
-  slider.addEventListener("input", updateSliderLabels);
-});
+const successSound = document.getElementById("soundSuccess");
+const failSound = document.getElementById("soundFail");
 
 function updateSliderLabels() {
   sideVal.textContent = sideSlider.value;
@@ -22,6 +21,10 @@ function updateSliderLabels() {
   endVal.textContent = rangeEndSlider.value;
   targetVal.textContent = targetSumSlider.value;
 }
+
+[sideSlider, rangeStartSlider, rangeEndSlider, targetSumSlider].forEach(slider => {
+  slider.addEventListener("input", updateSliderLabels);
+});
 
 updateSliderLabels();
 
@@ -53,8 +56,10 @@ document.getElementById("solveButton").addEventListener("click", () => {
         possibleSums.add(sumX);
         if (sumX === targetSum && !found) {
           drawTriangle(x, y, z);
-          resultDiv.innerHTML = `<p>Ratkaisu löytyi!</p><p>x = [${x.join(', ')}]</p><p>y = [${y.join(', ')}]</p><p>z = [${z.join(', ')}]</p>`;
+          resultDiv.innerHTML = `<p>🎉 Ratkaisu löytyi!</p><p>x = [${x.join(', ')}]</p><p>y = [${y.join(', ')}]</p><p>z = [${z.join(', ')}]</p>`;
           found = true;
+          successSound.play();
+          triggerAnimation();
         }
       }
       return;
@@ -70,11 +75,12 @@ document.getElementById("solveButton").addEventListener("click", () => {
   permute(numbers, 6);
 
   if (!found) {
-    resultDiv.innerHTML = `<p style="color: #f55;">Ratkaisua ei löytynyt!</p>`;
+    resultDiv.innerHTML = `<p style="color: #f55;">🚫 Ratkaisua ei löytynyt!</p>`;
     const suggestions = [...possibleSums].filter(s => s !== targetSum).slice(0, 3);
     if (suggestions.length > 0) {
-      resultDiv.innerHTML += `<p>Mahdollisia summia joita voit kokeilla:</p><ul style="margin: 5px 0 0 15px; padding-left: 10px; list-style-position: inside;">${suggestions.map(s => `<li style="margin: 1px 0;">${s}</li>`).join('')}</ul>`;
+      resultDiv.innerHTML += `<p>Mahdollisia summia joita voit kokeilla:</p><ul style="margin-top: 5px; margin-left: 5px;">${suggestions.map(s => `<li>${s}</li>`).join('')}</ul>`;
     }
+    failSound.play();
     clearTriangle();
   }
 });
@@ -96,6 +102,8 @@ function drawTriangle(x, y, z) {
   ctx.closePath();
   ctx.strokeStyle = "#0ff";
   ctx.lineWidth = 3;
+  ctx.shadowColor = "#0ff";
+  ctx.shadowBlur = 20;
   ctx.stroke();
 
   drawSideNumbers(A, B, x, 'left');
@@ -111,20 +119,20 @@ function drawSideNumbers(p1, p2, nums, side) {
     const x = p1.x + dx * i;
     const y = p1.y + dy * i;
     ctx.fillStyle = "#0f0";
-    ctx.font = "bold 20px sans-serif";
-    let offsetX = 0;
-    let offsetY = 0;
-    if ((i === 0 || i === nums.length - 1)) {
-      offsetY = side === 'bottom' ? -20 : 20;
-      offsetX = i === 0 ? -20 : 10;
-    } else {
-      offsetY = -10;
-      offsetX = -10;
-    }
+    ctx.font = "bold 20px monospace";
+    let offsetX = -10;
+    let offsetY = -10;
     ctx.fillText(nums[i], x + offsetX, y + offsetY);
   }
 }
 
 function clearTriangle() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+function triggerAnimation() {
+  canvas.classList.add("flash");
+  setTimeout(() => {
+    canvas.classList.remove("flash");
+  }, 300);
 }
