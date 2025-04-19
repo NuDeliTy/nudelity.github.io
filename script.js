@@ -37,9 +37,9 @@ document.getElementById("solveButton").addEventListener("click", () => {
   }
 
   let found = false;
+  const possibleSums = new Set();
 
   function permute(arr, len, current = []) {
-    if (found) return;
     if (current.length === len) {
       const [x0, y0, z0, x1, y1, z1] = current;
       const x = [x0, x1, z0];
@@ -49,10 +49,13 @@ document.getElementById("solveButton").addEventListener("click", () => {
       const sumY = y.reduce((a, b) => a + b, 0);
       const sumZ = z.reduce((a, b) => a + b, 0);
 
-      if (sumX === targetSum && sumY === targetSum && sumZ === targetSum) {
-        drawTriangle(x, y, z);
-        resultDiv.innerHTML = `<p>Ratkaisu löytyi!</p><p>x = [${x.join(', ')}]</p><p>y = [${y.join(', ')}]</p><p>z = [${z.join(', ')}]</p>`;
-        found = true;
+      if (sumX === sumY && sumY === sumZ) {
+        possibleSums.add(sumX);
+        if (sumX === targetSum && !found) {
+          drawTriangle(x, y, z);
+          resultDiv.innerHTML = `<p>Ratkaisu löytyi!</p><p>x = [${x.join(', ')}]</p><p>y = [${y.join(', ')}]</p><p>z = [${z.join(', ')}]</p>`;
+          found = true;
+        }
       }
       return;
     }
@@ -68,6 +71,10 @@ document.getElementById("solveButton").addEventListener("click", () => {
 
   if (!found) {
     resultDiv.innerHTML = `<p style="color: #f55;">Ratkaisua ei löytynyt!</p>`;
+    const suggestions = [...possibleSums].filter(s => s !== targetSum).slice(0, 3);
+    if (suggestions.length > 0) {
+      resultDiv.innerHTML += `<p>Mahdollisia summia joita voit kokeilla:</p><ul>${suggestions.map(s => `<li>${s}</li>`).join('')}</ul>`;
+    }
     clearTriangle();
   }
 });
@@ -91,12 +98,12 @@ function drawTriangle(x, y, z) {
   ctx.lineWidth = 3;
   ctx.stroke();
 
-  drawSideNumbers(A, B, x);
-  drawSideNumbers(B, C, y);
-  drawSideNumbers(C, A, z);
+  drawSideNumbers(A, B, x, 'left');
+  drawSideNumbers(B, C, y, 'bottom');
+  drawSideNumbers(C, A, z, 'right');
 }
 
-function drawSideNumbers(p1, p2, nums) {
+function drawSideNumbers(p1, p2, nums, side) {
   const dx = (p2.x - p1.x) / (nums.length - 1);
   const dy = (p2.y - p1.y) / (nums.length - 1);
 
@@ -105,7 +112,16 @@ function drawSideNumbers(p1, p2, nums) {
     const y = p1.y + dy * i;
     ctx.fillStyle = "#0f0";
     ctx.font = "bold 20px sans-serif";
-    ctx.fillText(nums[i], x - 10, y - 10);
+    let offsetX = 0;
+    let offsetY = 0;
+    if ((i === 0 || i === nums.length - 1)) {
+      offsetY = side === 'bottom' ? -25 : 25;
+      offsetX = i === 0 ? -15 : 15;
+    } else {
+      offsetY = -10;
+      offsetX = -10;
+    }
+    ctx.fillText(nums[i], x + offsetX, y + offsetY);
   }
 }
 
