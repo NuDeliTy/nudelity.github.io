@@ -27,9 +27,7 @@ function updateSliderLabels() {
 });
 updateSliderLabels();
 
-document.getElementById("solveButton").addEventListener("click", solvePuzzle);
-
-function solvePuzzle() {
+document.getElementById("solveButton").addEventListener("click", () => {
   const sideCount = parseInt(sideSlider.value);
   const rangeStart = parseInt(rangeStartSlider.value);
   const rangeEnd = parseInt(rangeEndSlider.value);
@@ -40,38 +38,33 @@ function solvePuzzle() {
     numbers.push(i);
   }
 
+  const needed = sideCount * 3 - 3;
   let found = false;
   const possibleSums = new Set();
 
   function getSides(arr) {
-    const total = sideCount * 3 - 3;
-    const a = arr.slice(0, sideCount);
-    const b = arr.slice(sideCount - 1, sideCount * 2 - 1);
-    const c = arr.slice(sideCount * 2 - 2, total);
-
-    const A = [...a];
-    const B = [b[0], ...b.slice(1)];
-    const C = [c[0], ...c.slice(1)];
-
-    return [A, B, C];
-  }
-
-  function checkEqualSum(sides) {
-    const sums = sides.map(side => side.reduce((a, b) => a + b, 0));
-    return sums.every(sum => sum === sums[0]) ? sums[0] : null;
+    const a = arr[0];
+    const b = arr.slice(1, sideCount - 1 + 1);
+    const c = arr.slice(sideCount, sideCount * 2 - 2 + 1);
+    const d = arr.slice(sideCount * 2 - 1);
+    const x = [a, ...b];
+    const y = [x[x.length - 1], ...c];
+    const z = [y[y.length - 1], ...d, a];
+    return [x, y, z];
   }
 
   function permute(arr, len, current = []) {
     if (current.length === len) {
       const [x, y, z] = getSides(current);
-      const sum = checkEqualSum([x, y, z]);
-      if (sum !== null) {
-        possibleSums.add(sum);
-        if (sum === targetSum && !found) {
+      const sumX = x.reduce((a, b) => a + b, 0);
+      const sumY = y.reduce((a, b) => a + b, 0);
+      const sumZ = z.reduce((a, b) => a + b, 0);
+
+      if (sumX === sumY && sumY === sumZ) {
+        possibleSums.add(sumX);
+        if (sumX === targetSum && !found) {
           drawTriangle(x, y, z);
           resultDiv.innerHTML = `<p>🎉 Ratkaisu löytyi!</p><p>x = [${x.join(', ')}]</p><p>y = [${y.join(', ')}]</p><p>z = [${z.join(', ')}]</p>`;
-          successSound.currentTime = 0;
-          successSound.play();
           found = true;
         }
       }
@@ -85,20 +78,18 @@ function solvePuzzle() {
     }
   }
 
-  const neededLength = sideCount * 3 - 3;
-  permute(numbers, neededLength);
+  permute(numbers, needed);
 
   if (!found) {
-    resultDiv.innerHTML = `<p style="color:#f55;">Ratkaisua ei löytynyt!</p>`;
-    failSound.currentTime = 0;
-    failSound.play();
-    const suggestions = [...possibleSums].filter(s => s !== targetSum).slice(0, 5);
+    resultDiv.innerHTML = `<p style="color: #f55;">Ratkaisua ei löytynyt!</p>`;
+    const suggestions = [...possibleSums].filter(s => s !== targetSum).slice(0, 3);
     if (suggestions.length > 0) {
-      resultDiv.innerHTML += `<p>Mahdollisia summia joita voit kokeilla:</p><ul>${suggestions.map(s => `<li>${s}</li>`).join('')}</ul>`;
+      resultDiv.innerHTML += `<p>Mahdollisia summia joita voit kokeilla:</p><ul style="margin-top: 5px; margin-left: 10px;">${suggestions.map(s => `<li style="margin: 2px 0;">• ${s}</li>`).join('')}</ul>`;
     }
     clearTriangle();
   }
-}
+});
+
 
 function drawTriangle(x, y, z) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
