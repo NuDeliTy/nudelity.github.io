@@ -73,7 +73,7 @@ document.getElementById("solveButton").addEventListener("click", () => {
     resultDiv.innerHTML = `<p style="color: #f55;">Ratkaisua ei löytynyt!</p>`;
     const suggestions = [...possibleSums].filter(s => s !== targetSum).slice(0, 3);
     if (suggestions.length > 0) {
-      resultDiv.innerHTML += `<p>Mahdollisia summia joita voit kokeilla:</p><ul>${suggestions.map(s => `<li>${s}</li>`).join('')}</ul>`;
+      resultDiv.innerHTML += `<p>Mahdollisia summia joita voit kokeilla:</p><ul style="margin-top: 5px; margin-left: 10px;">${suggestions.map(s => `<li style="margin: 2px 0;">${s}</li>`).join('')}</ul>`;
     }
     clearTriangle();
   }
@@ -82,8 +82,8 @@ document.getElementById("solveButton").addEventListener("click", () => {
 function drawTriangle(x, y, z) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   const cx = canvas.width / 2;
-  const cy = 240;
-  const size = 200;
+  const cy = canvas.height / 2;
+  const size = 160;
 
   const A = { x: cx, y: cy - size };
   const B = { x: cx - size, y: cy + size * 0.75 };
@@ -115,8 +115,8 @@ function drawSideNumbers(p1, p2, nums, side) {
     let offsetX = 0;
     let offsetY = 0;
     if ((i === 0 || i === nums.length - 1)) {
-      offsetY = side === 'bottom' ? -25 : 25;
-      offsetX = i === 0 ? -15 : 15;
+      offsetY = side === 'bottom' ? -15 : 15;
+      offsetX = i === 0 ? -20 : 10;
     } else {
       offsetY = -10;
       offsetX = -10;
