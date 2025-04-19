@@ -1,67 +1,52 @@
 body {
-  background-color: #0a0a0a;
-  color: #39ff14;
-  font-family: 'Segoe UI', sans-serif;
+  background-color: #111;
+  color: #0ff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   text-align: center;
   margin: 0;
   padding: 0;
 }
 
-h1 {
-  font-size: 2em;
-  margin: 1em 0;
-  color: #ff00ff;
-}
-
 .container {
-  padding: 1em;
+  padding: 20px;
 }
 
-.controls {
-  margin-bottom: 1em;
-}
-
-label {
-  display: block;
-  margin: 0.5em 0;
-  color: #00ffff;
+.slider-group {
+  margin-bottom: 20px;
 }
 
 input[type="range"] {
   width: 80%;
+  margin: 5px auto 15px;
+  display: block;
 }
 
 button {
-  padding: 0.5em 1em;
-  margin: 1em;
-  background-color: #222;
-  color: #39ff14;
-  border: 2px solid #39ff14;
-  font-size: 1em;
-  cursor: pointer;
+  padding: 10px 20px;
+  background: #0ff;
+  border: none;
+  color: #111;
+  font-weight: bold;
+  font-size: 16px;
   border-radius: 10px;
-  transition: 0.3s;
+  cursor: pointer;
+  transition: 0.2s;
 }
 
 button:hover {
-  background-color: #39ff14;
-  color: #000;
+  background: #0cf;
 }
 
-#triangle {
-  display: flex;
-  justify-content: center;
-  margin-top: 2em;
+#triangleContainer {
+  margin-top: 30px;
 }
 
-#triangleSvg text {
-  fill: #fff;
+canvas {
+  border: 1px solid #0ff;
+  background-color: #000;
+}
+
+#result {
+  margin-top: 20px;
   font-size: 18px;
-  font-weight: bold;
-  text-shadow: 0 0 5px #39ff14;
-}
-
-#message {
-  margin-top: 1em;
-  color: #f0f;
 }
