@@ -1,118 +1,114 @@
-const startSlider = document.getElementById("rangeStart");
-const endSlider = document.getElementById("rangeEnd");
-const sumSlider = document.getElementById("targetSum");
-const startVal = document.getElementById("startVal");
-const endVal = document.getElementById("endVal");
-const sumVal = document.getElementById("sumVal");
-const solveBtn = document.getElementById("solveBtn");
-const messageDiv = document.getElementById("message");
-const svg = document.getElementById("triangleSvg");
+const sideSlider = document.getElementById("sideCount");
+const rangeStartSlider = document.getElementById("rangeStart");
+const rangeEndSlider = document.getElementById("rangeEnd");
+const targetSumSlider = document.getElementById("targetSum");
 
-function updateLabels() {
-  startVal.textContent = startSlider.value;
-  endVal.textContent = endSlider.value;
+const sideVal = document.getElementById("sideCountVal");
+const startVal = document.getElementById("rangeStartVal");
+const endVal = document.getElementById("rangeEndVal");
+const targetVal = document.getElementById("targetSumVal");
 
-  const start = parseInt(startSlider.value);
-  const end = parseInt(endSlider.value);
-  sumSlider.min = start * 3;
-  sumSlider.max = end * 3;
-  if (parseInt(sumSlider.value) < sumSlider.min) sumSlider.value = sumSlider.min;
-  if (parseInt(sumSlider.value) > sumSlider.max) sumSlider.value = sumSlider.max;
-  sumVal.textContent = sumSlider.value;
-}
+const canvas = document.getElementById("triangleCanvas");
+const ctx = canvas.getContext("2d");
+const resultDiv = document.getElementById("result");
 
-[startSlider, endSlider, sumSlider].forEach(slider => {
-  slider.addEventListener("input", updateLabels);
+[sideSlider, rangeStartSlider, rangeEndSlider, targetSumSlider].forEach(slider => {
+  slider.addEventListener("input", updateSliderLabels);
 });
 
-function solveTriangle(start, end, target) {
-  const range = [];
-  for (let i = start; i <= end; i++) range.push(i);
+function updateSliderLabels() {
+  sideVal.textContent = sideSlider.value;
+  startVal.textContent = rangeStartSlider.value;
+  endVal.textContent = rangeEndSlider.value;
+  targetVal.textContent = targetSumSlider.value;
+}
 
-  const perms = permute(range, 6);
-  for (let p of perms) {
-    const [x0, y0, z0, x1, y1, z1] = p;
-    const x2 = z0, y2 = x0, z2 = y0;
+updateSliderLabels();
 
-    const x = [x0, x1, x2];
-    const y = [y0, y1, y2];
-    const z = [z0, z1, z2];
+document.getElementById("solveButton").addEventListener("click", () => {
+  const sideCount = parseInt(sideSlider.value);
+  const rangeStart = parseInt(rangeStartSlider.value);
+  const rangeEnd = parseInt(rangeEndSlider.value);
+  const targetSum = parseInt(targetSumSlider.value);
 
-    if (sum(x) === target && sum(y) === target && sum(z) === target) {
-      return { x, y, z };
+  const numbers = [];
+  for (let i = rangeStart; i <= rangeEnd; i++) {
+    numbers.push(i);
+  }
+
+  let found = false;
+
+  function permute(arr, len, current = []) {
+    if (found) return;
+    if (current.length === len) {
+      const [x0, y0, z0, x1, y1, z1] = current;
+      const x = [x0, x1, z0];
+      const y = [y0, y1, x0];
+      const z = [z0, z1, y0];
+      const sumX = x.reduce((a, b) => a + b, 0);
+      const sumY = y.reduce((a, b) => a + b, 0);
+      const sumZ = z.reduce((a, b) => a + b, 0);
+
+      if (sumX === targetSum && sumY === targetSum && sumZ === targetSum) {
+        drawTriangle(x, y, z);
+        resultDiv.innerHTML = `<p>Ratkaisu löytyi!</p><p>x = [${x.join(', ')}]</p><p>y = [${y.join(', ')}]</p><p>z = [${z.join(', ')}]</p>`;
+        found = true;
+      }
+      return;
+    }
+
+    for (let i = 0; i < arr.length; i++) {
+      if (!current.includes(arr[i])) {
+        permute(arr, len, [...current, arr[i]]);
+      }
     }
   }
-  return null;
-}
 
-function sum(arr) {
-  return arr.reduce((a, b) => a + b, 0);
-}
+  permute(numbers, 6);
 
-function permute(arr, k) {
-  if (k === 1) return arr.map(e => [e]);
-  let res = [];
-  for (let i = 0; i < arr.length; i++) {
-    let rest = arr.slice(0, i).concat(arr.slice(i + 1));
-    for (let p of permute(rest, k - 1)) {
-      res.push([arr[i], ...p]);
-    }
+  if (!found) {
+    resultDiv.innerHTML = `<p style="color: #f55;">Ratkaisua ei löytynyt!</p>`;
+    clearTriangle();
   }
-  return res;
-}
+});
 
 function drawTriangle(x, y, z) {
-  svg.innerHTML = '';
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const cx = canvas.width / 2;
+  const cy = 240;
+  const size = 200;
 
-  const points = [
-    [150, 20],
-    [280, 230],
-    [20, 230]
-  ];
+  const A = { x: cx, y: cy - size };
+  const B = { x: cx - size, y: cy + size * 0.75 };
+  const C = { x: cx + size, y: cy + size * 0.75 };
 
-  const path = `M${points[0][0]},${points[0][1]} L${points[1][0]},${points[1][1]} L${points[2][0]},${points[2][1]} Z`;
-  const trianglePath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-  trianglePath.setAttribute("d", path);
-  trianglePath.setAttribute("stroke", "#ff00ff");
-  trianglePath.setAttribute("stroke-width", "4");
-  trianglePath.setAttribute("fill", "none");
-  svg.appendChild(trianglePath);
+  ctx.beginPath();
+  ctx.moveTo(A.x, A.y);
+  ctx.lineTo(B.x, B.y);
+  ctx.lineTo(C.x, C.y);
+  ctx.closePath();
+  ctx.strokeStyle = "#0ff";
+  ctx.lineWidth = 3;
+  ctx.stroke();
 
-  const midpoints = [
-    [(points[0][0] + points[1][0]) / 2, (points[0][1] + points[1][1]) / 2],
-    [(points[1][0] + points[2][0]) / 2, (points[1][1] + points[2][1]) / 2],
-    [(points[2][0] + points[0][0]) / 2, (points[2][1] + points[0][1]) / 2]
-  ];
-
-  const labels = [
-    x.join(" "),
-    y.join(" "),
-    z.join(" ")
-  ];
-
-  midpoints.forEach((pos, i) => {
-    const txt = document.createElementNS("http://www.w3.org/2000/svg", "text");
-    txt.setAttribute("x", pos[0]);
-    txt.setAttribute("y", pos[1]);
-    txt.setAttribute("text-anchor", "middle");
-    txt.textContent = labels[i];
-    svg.appendChild(txt);
-  });
+  drawSideNumbers(A, B, x);
+  drawSideNumbers(B, C, y);
+  drawSideNumbers(C, A, z);
 }
 
-solveBtn.addEventListener("click", () => {
-  const start = parseInt(startSlider.value);
-  const end = parseInt(endSlider.value);
-  const target = parseInt(sumSlider.value);
+function drawSideNumbers(p1, p2, nums) {
+  const dx = (p2.x - p1.x) / (nums.length - 1);
+  const dy = (p2.y - p1.y) / (nums.length - 1);
 
-  const result = solveTriangle(start, end, target);
-  if (result) {
-    drawTriangle(result.x, result.y, result.z);
-    messageDiv.textContent = "";
-  } else {
-    messageDiv.textContent = "Ei löytynyt ratkaisua. Kokeile eri arvoja!";
-    svg.innerHTML = '';
+  for (let i = 0; i < nums.length; i++) {
+    const x = p1.x + dx * i;
+    const y = p1.y + dy * i;
+    ctx.fillStyle = "#0f0";
+    ctx.font = "bold 20px sans-serif";
+    ctx.fillText(nums[i], x - 10, y - 10);
   }
-});
+}
 
-updateLabels();
+function clearTriangle() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
