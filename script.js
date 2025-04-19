@@ -40,15 +40,18 @@ function solveTriangle(n, start, end, target) {
   for (let a of combinations) {
     for (let b of combinations) {
       for (let c of combinations) {
+        // Ensure the shared corner numbers between sides are the same
         const sharedAB = a[a.length - 1];
         const sharedBC = b[b.length - 1];
         const sharedCA = c[c.length - 1];
 
         if (sharedAB === b[0] && sharedBC === c[0] && sharedCA === a[0]) {
+          // Calculate the sum for each side
           const sumA = a.reduce((x, y) => x + y, 0);
           const sumB = b.reduce((x, y) => x + y, 0);
           const sumC = c.reduce((x, y) => x + y, 0);
 
+          // Ensure each side's sum matches the target
           if (sumA === target && sumB === target && sumC === target) {
             found = true;
             solution = [a, b, c];
@@ -73,6 +76,7 @@ function solveTriangle(n, start, end, target) {
     failSound.play();
   }
 }
+
 
 function drawTriangle(sides) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
