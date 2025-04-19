@@ -12,14 +12,8 @@ const canvas = document.getElementById("triangleCanvas");
 const ctx = canvas.getContext("2d");
 const resultDiv = document.getElementById("result");
 
-const winSound = document.getElementById("winSound");
+const successSound = document.getElementById("successSound");
 const failSound = document.getElementById("failSound");
-
-if (found) {
-  winSound.play(); // Play the win sound when a solution is found
-} else {
-  failSound.play(); // Play the fail sound when no solution is found
-}
 
 [sideSlider, rangeStartSlider, rangeEndSlider, targetSumSlider].forEach(slider => {
   slider.addEventListener("input", updateSliderLabels);
@@ -45,28 +39,33 @@ document.getElementById("solveButton").addEventListener("click", () => {
     numbers.push(i);
   }
 
+  const needed = sideCount * 3 - 3;
   let found = false;
   const possibleSums = new Set();
 
   function permute(arr, len, current = []) {
+    if (found) return;
     if (current.length === len) {
-      const [a, b, c, d, e, f] = current;
+      const total = current.slice();
+      const cornerA = total[0];
+      const cornerB = total[sideCount - 1];
+      const cornerC = total[2 * sideCount - 2];
 
-      const x = [a, b, c]; // left side from top to bottom
-      const y = [c, d, e]; // bottom side from left to right
-      const z = [e, f, a]; // right side from bottom to top
+      const side1 = total.slice(0, sideCount);
+      const side2 = [cornerB, ...total.slice(sideCount, 2 * sideCount - 2), cornerC];
+      const side3 = [cornerC, ...total.slice(2 * sideCount - 2, 3 * sideCount - 3), cornerA];
 
-      const sumX = x.reduce((acc, val) => acc + val, 0);
-      const sumY = y.reduce((acc, val) => acc + val, 0);
-      const sumZ = z.reduce((acc, val) => acc + val, 0);
+      const sum1 = side1.reduce((a, b) => a + b, 0);
+      const sum2 = side2.reduce((a, b) => a + b, 0);
+      const sum3 = side3.reduce((a, b) => a + b, 0);
 
-      if (sumX === sumY && sumY === sumZ) {
-        possibleSums.add(sumX);
-        if (sumX === targetSum && !found) {
-          drawTriangle(x, y, z);
-          resultDiv.innerHTML = `<p>🎉 Ratkaisu löytyi!</p><p>x = [${x.join(', ')}]</p><p>y = [${y.join(', ')}]</p><p>z = [${z.join(', ')}]</p>`;
-          successSound.play();
+      if (sum1 === sum2 && sum2 === sum3) {
+        possibleSums.add(sum1);
+        if (sum1 === targetSum) {
+          drawTriangle(side1, side2, side3);
+          resultDiv.innerHTML = `<p>🎉 Ratkaisu löytyi!</p><p>x = [${side1.join(', ')}]</p><p>y = [${side2.join(', ')}]</p><p>z = [${side3.join(', ')}]</p>`;
           found = true;
+          successSound.play();
         }
       }
       return;
@@ -79,16 +78,16 @@ document.getElementById("solveButton").addEventListener("click", () => {
     }
   }
 
-  permute(numbers, 6);
+  permute(numbers, needed);
 
   if (!found) {
-    resultDiv.innerHTML = `<p style="color: #f55;">Ratkaisua ei löytynyt!</p>`;
+    resultDiv.innerHTML = `<p style="color:#f55;">Ratkaisua ei löytynyt!</p>`;
     const suggestions = [...possibleSums].filter(s => s !== targetSum).slice(0, 3);
     if (suggestions.length > 0) {
-      resultDiv.innerHTML += `<p>Mahdollisia summia joita voit kokeilla:</p><ul style="margin-top: 5px; margin-left: 5px;">${suggestions.map(s => `<li style="margin: 2px 0;">• ${s}</li>`).join('')}</ul>`;
+      resultDiv.innerHTML += `<p>Mahdollisia summia joita voit kokeilla:</p><ul>${suggestions.map(s => `<li>${s}</li>`).join('')}</ul>`;
     }
-    clearTriangle();
     failSound.play();
+    clearTriangle();
   }
 });
 
@@ -113,7 +112,7 @@ function drawTriangle(x, y, z) {
 
   drawSideNumbers(A, B, x, 'left');
   drawSideNumbers(B, C, y, 'bottom');
-  drawSideNumbers(C, A, z.reverse(), 'right');
+  drawSideNumbers(C, A, z, 'right');
 }
 
 function drawSideNumbers(p1, p2, nums, side) {
@@ -124,13 +123,15 @@ function drawSideNumbers(p1, p2, nums, side) {
     const x = p1.x + dx * i;
     const y = p1.y + dy * i;
     ctx.fillStyle = "#0f0";
-    ctx.font = "bold 20px sans-serif";
+    ctx.font = "bold 18px monospace";
     let offsetX = -10;
-    let offsetY = 6;
+    let offsetY = -10;
+
     if (i === 0 || i === nums.length - 1) {
-      offsetX = side === 'left' ? -18 : side === 'right' ? 8 : -10;
-      offsetY = side === 'bottom' ? -10 : 10;
+      offsetX = i === 0 ? -18 : 8;
+      offsetY = side === 'bottom' ? -12 : 16;
     }
+
     ctx.fillText(nums[i], x + offsetX, y + offsetY);
   }
 }
