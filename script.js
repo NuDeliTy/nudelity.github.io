@@ -14,13 +14,11 @@ const targetSumVal = document.getElementById('targetSumVal');
 const winSound = document.getElementById('winSound');
 const failSound = document.getElementById('failSound');
 
-// Real-time updates for slider values
 sideSlider.oninput = () => sideVal.textContent = sideSlider.value;
 rangeStartSlider.oninput = () => rangeStartVal.textContent = rangeStartSlider.value;
 rangeEndSlider.oninput = () => rangeEndVal.textContent = rangeEndSlider.value;
 targetSumSlider.oninput = () => targetSumVal.textContent = targetSumSlider.value;
 
-// Trigger solve logic when the button is clicked
 document.getElementById('solveButton').addEventListener('click', () => {
   const n = parseInt(sideSlider.value);
   const start = parseInt(rangeStartSlider.value);
@@ -45,7 +43,7 @@ function solveTriangle(n, start, end, target) {
         if (c[n - 1] !== a[0]) continue;
 
         const shared = [a[n - 1], b[n - 1], c[n - 1]];
-        const allNumbers = [...a, ...b.slice(1), ...c.slice(1)]; // avoid double counting shared corners
+        const allNumbers = [...a, ...b.slice(1), ...c.slice(1)];
         const numCounts = {};
 
         allNumbers.forEach(num => {
@@ -89,18 +87,14 @@ function solveTriangle(n, start, end, target) {
   } else {
     resultDiv.innerText = '❌ Ratkaisua ei löytynyt.\nMahdollisia tavoitesummia:';
     drawTriangle();
-    const possibleTargets = calculatePossibleTargets(combinations);
-    possibleTargets.forEach(t => resultDiv.innerText += `\n• ${t}`);
+    const validTargets = calculateValidTargets(n, start, end);
+    validTargets.forEach(t => resultDiv.innerText += `\n• ${t}`);
     failSound.play();
   }
 }
 
-
-
-
 function drawTriangle(sides) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-
   if (!sides) return;
 
   const [x, y, z] = sides;
@@ -110,8 +104,7 @@ function drawTriangle(sides) {
     { x: canvas.width - 100, y: canvas.height - 100 }
   ];
 
-  // Draw triangle
-  ctx.strokeStyle = '#0ff'; // Triangle color (neon)
+  ctx.strokeStyle = '#0ff';
   ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.moveTo(points[0].x, points[0].y);
@@ -123,17 +116,11 @@ function drawTriangle(sides) {
   const drawSide = (start, end, nums) => {
     for (let i = 0; i < nums.length; i++) {
       const t = i / (nums.length - 1);
-      const xPos = start.x + (end.x - start.x) * t;
-      const yPos = start.y + (end.y - start.y) * t;
-
-      // Adjust position slightly to make sure numbers are outside of the triangle lines
-      const offset = 15; // Offset value for positioning numbers outside
-      const textX = xPos + (xPos < canvas.width / 2 ? -offset : offset);
-      const textY = yPos + (yPos < canvas.height / 2 ? -offset : offset);
-
-      ctx.fillStyle = '#fff'; // White color for the numbers
+      const x = start.x + (end.x - start.x) * t;
+      const y = start.y + (end.y - start.y) * t;
+      ctx.fillStyle = '#fff';
       ctx.font = '16px Arial';
-      ctx.fillText(nums[i], textX - 10, textY);
+      ctx.fillText(nums[i], x - 8, y - 8);
     }
   };
 
@@ -153,11 +140,49 @@ function getCombinations(arr, len) {
   return combos;
 }
 
-function calculatePossibleTargets(combos) {
-  const targets = new Set();
-  combos.forEach(combo => {
-    const sum = combo.reduce((a, b) => a + b, 0);
-    targets.add(sum);
-  });
-  return Array.from(targets).sort((a, b) => a - b);
+function calculateValidTargets(n, start, end) {
+  const nums = [];
+  for (let i = start; i <= end; i++) nums.push(i);
+  const combinations = getCombinations(nums, n);
+  const validTargets = new Set();
+
+  for (let a of combinations) {
+    for (let b of combinations) {
+      for (let c of combinations) {
+        if (a[n - 1] !== b[0]) continue;
+        if (b[n - 1] !== c[0]) continue;
+        if (c[n - 1] !== a[0]) continue;
+
+        const shared = [a[n - 1], b[n - 1], c[n - 1]];
+        const allNumbers = [...a, ...b.slice(1), ...c.slice(1)];
+        const numCounts = {};
+
+        allNumbers.forEach(num => {
+          numCounts[num] = (numCounts[num] || 0) + 1;
+        });
+
+        let valid = true;
+        for (let num in numCounts) {
+          if (shared.includes(Number(num))) {
+            if (numCounts[num] > 2) {
+              valid = false;
+              break;
+            }
+          } else {
+            if (numCounts[num] > 1) {
+              valid = false;
+              break;
+            }
+          }
+        }
+
+        if (valid) {
+          const sum = a.reduce((x, y) => x + y, 0);
+          validTargets.add(sum);
+        }
+      }
+    }
+  }
+
+  return Array.from(validTargets).sort((a, b) => a - b);
 }
