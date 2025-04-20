@@ -31,12 +31,16 @@ document.getElementById('awesomenessToggle').addEventListener('change', (e) => {
   }
 });
 
-
 document.getElementById('solveButton').addEventListener('click', () => {
   const n = parseInt(sideSlider.value);
   const start = parseInt(rangeStartSlider.value);
   const end = parseInt(rangeEndSlider.value);
   const target = parseInt(targetSumSlider.value);
+  
+  // Scroll down to the canvas section
+  const canvasSection = document.getElementById('canvasSection');
+  canvasSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
   solveTriangle(n, start, end, target);
 });
 
@@ -81,210 +85,83 @@ function solveTriangle(n, start, end, target) {
         const sumA = a.reduce((x, y) => x + y, 0);
         const sumB = b.reduce((x, y) => x + y, 0);
         const sumC = c.reduce((x, y) => x + y, 0);
-
+        
         if (valid && sumA === target && sumB === target && sumC === target) {
           found = true;
           solution = [a, b, c];
           break;
         }
       }
-      if (found) break;
     }
-    if (found) break;
   }
 
   if (found) {
-    resultDiv.innerText = `🎉 Ratkaisu löytyi!\n\nx = [${solution[0].join(', ')}]\ny = [${solution[1].join(', ')}]\nz = [${solution[2].join(', ')}]`;
-    animateWizard(solution);
+    drawTriangle(solution);
     winSound.play();
   } else {
-    resultDiv.innerText = '❌ Ratkaisua ei löytynyt.\nMahdollisia tavoitesummia:';
-    drawTriangle();
-    const possibleTargets = calculateValidTargets(combinations, n);
-    possibleTargets.forEach(t => resultDiv.innerText += `\n• ${t}`);
+    resultDiv.textContent = "No solution found!";
     failSound.play();
-    wizard.classList.remove('active');
   }
 }
 
-function animateWizard(sides) {
-  const showWizard = awesomenessToggle.checked;
-  if (!showWizard) {
-    drawTriangle(sides);
-    return;
-  }
-
-  wizard.classList.add('active');
+function drawTriangle(solution) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  const [x, y, z] = sides;
-  const points = [
-    { x: canvas.width / 2, y: 50 },
-    { x: 100, y: canvas.height - 100 },
-    { x: canvas.width - 100, y: canvas.height - 100 }
-  ];
+  ctx.beginPath();
+  
+  const centerX = canvas.width / 2;
+  const centerY = canvas.height / 2;
+  const size = 150;
 
-  let step = 0;
-  function drawStep() {
-    if (step === 0) drawLaser(points[0].x, points[0].y, points[1].x, points[1].y);
-    if (step === 1) drawLaser(points[1].x, points[1].y, points[2].x, points[2].y);
-    if (step === 2) drawLaser(points[2].x, points[2].y, points[0].x, points[0].y);
-    if (step === 3) {
-      drawTriangle(sides);  // Draw triangle after lasers
-      wizard.classList.remove('active');
-    }
-    if (step < 3) step++;
-    else wizard.classList.remove('active');
-    if (step <= 3) setTimeout(drawStep, 500);  // Adjust timing here if necessary
+  const points = [];
+  for (let i = 0; i < 3; i++) {
+    points.push({
+      x: centerX + size * Math.cos((Math.PI * 2 * i) / 3),
+      y: centerY + size * Math.sin((Math.PI * 2 * i) / 3)
+    });
   }
-  drawStep();
+
+  ctx.moveTo(points[0].x, points[0].y);
+  for (let i = 1; i < 3; i++) {
+    ctx.lineTo(points[i].x, points[i].y);
+  }
+  ctx.closePath();
+  ctx.lineWidth = 5;
+  ctx.strokeStyle = '#0ff';
+  ctx.stroke();
+
+  solution.forEach((side, idx) => {
+    drawLaser(points[idx], points[(idx + 1) % 3], side);
+  });
 }
 
-
-
-function drawLaser(fromX, fromY, toX, toY) {
+function drawLaser(from, to, numbers) {
   const laser = document.createElement('div');
   laser.classList.add('laser');
   document.body.appendChild(laser);
 
-  // Position laser at the wizard's position
-  laser.style.left = `${fromX}px`;
-  laser.style.top = `${fromY}px`;
-
-  // Calculate the laser's trajectory to the target point
-  const angle = Math.atan2(toY - fromY, toX - fromX);
-  const distance = Math.sqrt(Math.pow(toX - fromX, 2) + Math.pow(toY - fromY, 2));
-
-  laser.style.width = `${distance}px`;
+  const angle = Math.atan2(to.y - from.y, to.x - from.x);
+  const length = Math.sqrt(Math.pow(to.x - from.x, 2) + Math.pow(to.y - from.y, 2));
+  
+  laser.style.left = `${from.x}px`;
+  laser.style.top = `${from.y}px`;
+  laser.style.width = `${length}px`;
   laser.style.transform = `rotate(${angle}rad)`;
-
-  // Animate the laser
-  laser.style.animation = 'zap 1s linear forwards';
-
-  // Cleanup after laser finishes drawing
-  setTimeout(() => {
-    laser.remove();
-  }, 1000);
+  laser.textContent = numbers.join(' ');
+  
+  setTimeout(() => laser.remove(), 500);
 }
 
-
-// Call this function to trigger the laser from wizard to triangle
-function drawLasersFromWizard() {
-  const wizard = document.getElementById('wizard');
-  const wizardX = wizard.offsetLeft + wizard.offsetWidth / 2;
-  const wizardY = wizard.offsetTop + wizard.offsetHeight / 2;
-
-  // Define the points of the triangle
-  const trianglePoints = [
-    { x: canvas.width / 2, y: 50 },
-    { x: 100, y: canvas.height - 100 },
-    { x: canvas.width - 100, y: canvas.height - 100 }
-  ];
-
-  // Draw laser beams to each of the triangle's points
-  trianglePoints.forEach(point => {
-    drawLaser(wizardX, wizardY, point.x, point.y);
-  });
-}
-
-// Run this when the toggle is on
-document.getElementById('awesomenessToggle').addEventListener('change', (e) => {
-  const wizard = document.getElementById('wizard');
-  if (e.target.checked) {
-    wizard.classList.add('active');
-    setTimeout(drawLasersFromWizard, 500); // Give the wizard a bit of time to activate before drawing lasers
-  } else {
-    wizard.classList.remove('active');
-  }
-});
-
-
-function drawTriangle(sides) {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  if (!sides) return;
-
-  const [x, y, z] = sides;
-  const points = [
-    { x: canvas.width / 2, y: 50 },
-    { x: 100, y: canvas.height - 100 },
-    { x: canvas.width - 100, y: canvas.height - 100 }
-  ];
-
-  ctx.strokeStyle = '#0ff';
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(points[0].x, points[0].y);
-  ctx.lineTo(points[1].x, points[1].y);
-  ctx.lineTo(points[2].x, points[2].y);
-  ctx.closePath();
-  ctx.stroke();
-
-  const drawSide = (start, end, nums) => {
-    for (let i = 0; i < nums.length; i++) {
-      const t = i / (nums.length - 1);
-      const x = start.x + (end.x - start.x) * t;
-      const y = start.y + (end.y - start.y) * t;
-      ctx.fillStyle = '#fff';
-      ctx.font = '16px Arial';
-      ctx.fillText(nums[i], x - 8, y - 8);
+function getCombinations(arr, n) {
+  let result = [];
+  let f = function(prefix, arr) {
+    if (prefix.length === n) {
+      result.push(prefix);
+      return;
     }
-  };
-
-  drawSide(points[0], points[1], x);
-  drawSide(points[1], points[2], y);
-  drawSide(points[2], points[0], z);
-}
-
-function getCombinations(arr, len) {
-  if (len === 1) return arr.map(v => [v]);
-  const combos = [];
-  for (let i = 0; i < arr.length; i++) {
-    const rest = [...arr.slice(0, i), ...arr.slice(i + 1)];
-    const innerCombos = getCombinations(rest, len - 1);
-    innerCombos.forEach(combo => combos.push([arr[i], ...combo]));
-  }
-  return combos;
-}
-
-function calculateValidTargets(combos, n) {
-  const targets = new Set();
-  for (let a of combos) {
-    for (let b of combos) {
-      for (let c of combos) {
-        if (a[n - 1] !== b[0]) continue;
-        if (b[n - 1] !== c[0]) continue;
-        if (c[n - 1] !== a[0]) continue;
-
-        const shared = [a[n - 1], b[n - 1], c[n - 1]];
-        const allNumbers = [...a, ...b.slice(1), ...c.slice(1)];
-        const numCounts = {};
-
-        allNumbers.forEach(num => {
-          numCounts[num] = (numCounts[num] || 0) + 1;
-        });
-
-        let valid = true;
-        for (let num in numCounts) {
-          if (shared.includes(Number(num))) {
-            if (numCounts[num] > 2) {
-              valid = false;
-              break;
-            }
-          } else {
-            if (numCounts[num] > 1) {
-              valid = false;
-              break;
-            }
-          }
-        }
-
-        if (valid) {
-          const sum = a.reduce((x, y) => x + y, 0);
-          if (sum === b.reduce((x, y) => x + y, 0) && sum === c.reduce((x, y) => x + y, 0)) {
-            targets.add(sum);
-          }
-        }
-      }
+    for (let i = 0; i < arr.length; i++) {
+      f(prefix.concat(arr[i]), arr.slice(i + 1));
     }
   }
-  return Array.from(targets).sort((a, b) => a - b);
+  f([], arr);
+  return result;
 }
