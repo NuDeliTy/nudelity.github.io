@@ -22,6 +22,16 @@ rangeStartSlider.oninput = () => rangeStartVal.textContent = rangeStartSlider.va
 rangeEndSlider.oninput = () => rangeEndVal.textContent = rangeEndSlider.value;
 targetSumSlider.oninput = () => targetSumVal.textContent = targetSumSlider.value;
 
+document.getElementById('awesomenessToggle').addEventListener('change', (e) => {
+  const wizard = document.getElementById('wizard');
+  if (e.target.checked) {
+    wizard.classList.add('active');
+  } else {
+    wizard.classList.remove('active');
+  }
+});
+
+
 document.getElementById('solveButton').addEventListener('click', () => {
   const n = parseInt(sideSlider.value);
   const start = parseInt(rangeStartSlider.value);
