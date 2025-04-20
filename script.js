@@ -99,7 +99,7 @@ function solveTriangle(n, start, end, target) {
     drawTriangle(solution);
     winSound.play();
   } else {
-    resultDiv.textContent = "No solution found!";
+    resultDiv.textContent = "Ei ratkaisua löytynyt!";
     failSound.play();
   }
 }
@@ -141,13 +141,17 @@ function drawLaser(from, to, numbers) {
 
   const angle = Math.atan2(to.y - from.y, to.x - from.x);
   const length = Math.sqrt(Math.pow(to.x - from.x, 2) + Math.pow(to.y - from.y, 2));
-  
-  laser.style.left = `${from.x}px`;
-  laser.style.top = `${from.y}px`;
+
+  // Constrain laser within canvas
+  const laserX = Math.max(0, Math.min(from.x, canvas.width - length));
+  const laserY = Math.max(0, Math.min(from.y, canvas.height));
+
+  laser.style.left = `${laserX}px`;
+  laser.style.top = `${laserY}px`;
   laser.style.width = `${length}px`;
   laser.style.transform = `rotate(${angle}rad)`;
   laser.textContent = numbers.join(' ');
-  
+
   setTimeout(() => laser.remove(), 500);
 }
 
