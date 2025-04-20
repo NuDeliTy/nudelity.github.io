@@ -1,37 +1,17 @@
+/* General Body Style */
 body {
-  background-color: #111;
-  color: #0ff;
-  font-family: 'Courier New', monospace;
-  text-align: center;
+  font-family: Arial, sans-serif;
+  background-color: #222;
+  color: #fff;
   padding: 20px;
   margin: 0;
-  overflow-x: hidden;
-}
-
-h1 {
-  font-size: 2rem;
-  margin-bottom: 10px;
-  text-shadow: 0 0 10px #0ff;
-}
-
-label, input, span {
-  font-size: 1rem;
 }
 
 .controls {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.slider-row {
-  display: flex;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 15px;
   justify-content: center;
-  margin-bottom: 20px;
 }
 
 .slider-group {
@@ -40,160 +20,104 @@ label, input, span {
   gap: 10px;
 }
 
-/* Toggle switch styling */
-.toggle-switch {
-  position: relative;
-  display: inline-block;
-  width: 60px;
-  height: 34px;
-}
-
-.toggle-switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.toggle-switch .slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  transition: 0.4s;
-  border-radius: 34px;
-}
-
-.toggle-switch .slider:before {
-  position: absolute;
-  content: "";
-  height: 26px;
-  width: 26px;
-  border-radius: 50%;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
-  transition: 0.4s;
-}
-
-input:checked + .slider {
-  background-color: #0ff;
-}
-
-input:checked + .slider:before {
-  transform: translateX(26px);
-}
-
-
-canvas {
-  border: 2px solid #0ff;
-  background-color: #000;
-  margin: 20px auto;
-  display: block;
-  max-width: 100%;
-  height: auto;
+label {
+  color: #0ff;
 }
 
 button {
   padding: 10px 20px;
-  font-size: 1rem;
-  background: #0ff;
-  color: #000;
+  background-color: #0ff;
   border: none;
-  border-radius: 10px;
+  color: #222;
   cursor: pointer;
-  transition: background 0.3s;
-  box-shadow: 0 0 10px #0ff;
+  font-size: 16px;
+  border-radius: 5px;
+  transition: background-color 0.3s;
 }
 
 button:hover {
-  background: #00f5ff;
-}
-
-#result {
-  white-space: pre-line;
-  margin-top: 20px;
-  font-size: 1.1rem;
-  color: #fff;
-  text-shadow: 0 0 5px #0ff;
-}
-
-#awesomenessToggle {
-  transform: scale(1.5);
-  margin-left: 10px;
+  background-color: #06c;
 }
 
 .awesome-label {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 10px;
-  margin-top: 20px;
-  color: #fff;
 }
 
-#wizard {
-  position: absolute;
-  bottom: 20px;
-  left: 20px;
-  width: 80px;
-  height: 80px;
-  background: url('https://cdn.pixabay.com/photo/2017/01/31/21/29/comic-characters-2027416_960_720.png') no-repeat center;
-  background-size: contain;
+.switch {
+  position: relative;
+  width: 60px;
+  height: 30px;
+  display: inline-block;
+  background-color: #333;
+  border-radius: 50px;
+  cursor: pointer;
+}
+
+.switch input {
   opacity: 0;
-  transition: opacity 0.5s ease-in-out;
-  pointer-events: none;
-  z-index: 10;
+  width: 0;
+  height: 0;
 }
 
-#wizard.active {
-  opacity: 1;
-  animation: wizardFloat 2s infinite ease-in-out;
-}
-
-@keyframes wizardFloat {
-  0% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
-  100% { transform: translateY(0); }
-}
-
-.laser {
+.switch:before {
+  content: '';
   position: absolute;
-  height: 2px;
-  background: #0ff;
-  box-shadow: 0 0 10px #0ff;
-  z-index: 5;
-  animation: zap 0.5s linear forwards;
+  left: 4px;
+  top: 4px;
+  width: 22px;
+  height: 22px;
+  background-color: #fff;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
 }
 
-@keyframes zap {
-  from { width: 0; }
-  to { width: 200px; }
+.switch input:checked + .switch:before {
+  transform: translateX(30px);
 }
 
-@media (max-width: 768px) {
+/* Canvas Style */
+canvas {
+  max-width: 100%;
+  height: auto;
+  border: 2px solid #0ff;
+  margin-top: 20px;
+}
+
+/* Scroll Section */
+#triangleBox {
+  margin-top: 50px;
+}
+
+/* Responsive scaling */
+@media (max-width: 600px) {
   body {
     padding: 10px;
+    font-size: 14px;
   }
 
-  h1 {
-    font-size: 1.5rem;
+  .controls {
+    gap: 5px;
   }
 
-  button {
-    padding: 8px 16px;
-    font-size: 1rem;
-  }
-
-  .slider-row {
+  .slider-group {
     flex-direction: column;
-    gap: 15px;
+    align-items: flex-start;
   }
 
   canvas {
-    max-width: 90%;
+    width: 100%;
+    max-width: 500px;
     height: auto;
+  }
+
+  .awesome-label {
+    gap: 5px;
+  }
+
+  button {
+    padding: 8px 15px;
+    font-size: 14px;
   }
 }
