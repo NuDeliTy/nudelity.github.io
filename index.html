@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ohton kolmio äppi</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>Ohton kolmio äppi 🎲</h1>
+
+  <div class="sliders">
+    <div class="slider-group">
+      <label for="sideCount">Sivun numeroiden määrä: <span id="sideCountVal">3</span></label>
+      <input type="range" id="sideCount" min="3" max="5" value="3" />
+    </div>
+    <div class="slider-group">
+      <label for="rangeStart">Lukualueen alku: <span id="rangeStartVal">1</span></label>
+      <input type="range" id="rangeStart" min="1" max="20" value="1" />
+    </div>
+    <div class="slider-group">
+      <label for="rangeEnd">Lukualueen loppu: <span id="rangeEndVal">10</span></label>
+      <input type="range" id="rangeEnd" min="1" max="20" value="10" />
+    </div>
+    <div class="slider-group">
+      <label for="targetSum">Tavoitesumma: <span id="targetSumVal">10</span></label>
+      <input type="range" id="targetSum" min="3" max="60" value="10" />
+    </div>
+  </div>
+
+  <button id="solveButton">Ratkaise</button>
+
+  <canvas id="triangleCanvas" width="500" height="500"></canvas>
+
+  <pre id="result"></pre>
+
+  <audio id="winSound" src="https://cdn.freesound.org/previews/769/769816_12755346-lq.mp3"></audio>
+  <audio id="failSound" src="https://freesound.org/data/previews/331/331912_3248244-lq.mp3"></audio>
+
+  <script src="script.js"></script>
+</body>
+</html>
