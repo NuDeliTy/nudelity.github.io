@@ -1,3 +1,4 @@
+// script.js
 const canvas = document.getElementById('triangleCanvas');
 const ctx = canvas.getContext('2d');
 const resultDiv = document.getElementById('result');
@@ -34,6 +35,7 @@ function solveTriangle(n, start, end, target) {
   const combinations = getCombinations(nums, n);
   let found = false;
   let solution = null;
+  const validSolutions = [];
 
   for (let a of combinations) {
     for (let b of combinations) {
@@ -69,6 +71,10 @@ function solveTriangle(n, start, end, target) {
         const sumB = b.reduce((x, y) => x + y, 0);
         const sumC = c.reduce((x, y) => x + y, 0);
 
+        if (valid && sumA === sumB && sumB === sumC) {
+          validSolutions.push([a, b, c, sumA]);
+        }
+
         if (valid && sumA === target && sumB === target && sumC === target) {
           found = true;
           solution = [a, b, c];
@@ -87,8 +93,8 @@ function solveTriangle(n, start, end, target) {
   } else {
     resultDiv.innerText = '❌ Ratkaisua ei löytynyt.\nMahdollisia tavoitesummia:';
     drawTriangle();
-    const validTargets = calculateValidTargets(n, start, end);
-    validTargets.forEach(t => resultDiv.innerText += `\n• ${t}`);
+    const possibleTargets = [...new Set(validSolutions.map(s => s[3]))].sort((a, b) => a - b);
+    possibleTargets.forEach(t => resultDiv.innerText += `\n• ${t}`);
     failSound.play();
   }
 }
@@ -138,51 +144,4 @@ function getCombinations(arr, len) {
     innerCombos.forEach(combo => combos.push([arr[i], ...combo]));
   }
   return combos;
-}
-
-function calculateValidTargets(n, start, end) {
-  const nums = [];
-  for (let i = start; i <= end; i++) nums.push(i);
-  const combinations = getCombinations(nums, n);
-  const validTargets = new Set();
-
-  for (let a of combinations) {
-    for (let b of combinations) {
-      for (let c of combinations) {
-        if (a[n - 1] !== b[0]) continue;
-        if (b[n - 1] !== c[0]) continue;
-        if (c[n - 1] !== a[0]) continue;
-
-        const shared = [a[n - 1], b[n - 1], c[n - 1]];
-        const allNumbers = [...a, ...b.slice(1), ...c.slice(1)];
-        const numCounts = {};
-
-        allNumbers.forEach(num => {
-          numCounts[num] = (numCounts[num] || 0) + 1;
-        });
-
-        let valid = true;
-        for (let num in numCounts) {
-          if (shared.includes(Number(num))) {
-            if (numCounts[num] > 2) {
-              valid = false;
-              break;
-            }
-          } else {
-            if (numCounts[num] > 1) {
-              valid = false;
-              break;
-            }
-          }
-        }
-
-        if (valid) {
-          const sum = a.reduce((x, y) => x + y, 0);
-          validTargets.add(sum);
-        }
-      }
-    }
-  }
-
-  return Array.from(validTargets).sort((a, b) => a - b);
 }
