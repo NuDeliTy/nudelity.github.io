@@ -1,66 +1,54 @@
 <!DOCTYPE html>
-<html lang="fi">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ohton kolmio äppi</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Triangle Puzzle App</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>Ohton kolmio äppi</h1>
+  <h1>Ohton Kolmio Äppi</h1>
 
-  <div class="slider-container">
-    <label for="sideCount">Sivun numeroiden määrä: <span id="sideCountVal">3</span></label>
-    <input type="range" id="sideCount" min="3" max="5" value="3" />
-
-    <label for="rangeStart">Alkuarvo: <span id="rangeStartVal">1</span></label>
-    <input type="range" id="rangeStart" min="1" max="20" value="1" />
-
-    <label for="rangeEnd">Loppuarvo: <span id="rangeEndVal">9</span></label>
-    <input type="range" id="rangeEnd" min="1" max="20" value="9" />
-
-    <label for="targetSum">Tavoitesumma: <span id="targetSumVal">12</span></label>
-    <input type="range" id="targetSum" min="3" max="60" value="12" />
-  </div>
-
-  <div class="toggle-container">
-    <span>Awesomeness: 5000</span>
-    <label class="switch">
-      <input type="checkbox" id="awesomenessToggle">
-      <span class="slider round"></span>
-    </label>
-  </div>
-
+  <!-- Controls Section -->
   <div class="controls">
-  <div class="slider-row">
-    <div class="slider-group">
-      <label for="sideCount">Number of sides:</label>
-      <input type="range" id="sideCount" min="3" max="6" value="3">
-      <span id="sideCountVal">3</span>
+    <div class="slider-row">
+      <div class="slider-group">
+        <label for="sideCount">Number of sides:</label>
+        <input type="range" id="sideCount" min="3" max="6" value="3">
+        <span id="sideCountVal">3</span>
+      </div>
+      <div class="slider-group">
+        <label for="rangeStart">Start range:</label>
+        <input type="range" id="rangeStart" min="1" max="10" value="1">
+        <span id="rangeStartVal">1</span>
+      </div>
+      <div class="slider-group">
+        <label for="rangeEnd">End range:</label>
+        <input type="range" id="rangeEnd" min="10" max="20" value="10">
+        <span id="rangeEndVal">10</span>
+      </div>
+      <div class="slider-group">
+        <label for="targetSum">Target sum:</label>
+        <input type="range" id="targetSum" min="10" max="50" value="10">
+        <span id="targetSumVal">10</span>
+      </div>
     </div>
-    <div class="slider-group">
-      <label for="rangeStart">Start range:</label>
-      <input type="range" id="rangeStart" min="1" max="10" value="1">
-      <span id="rangeStartVal">1</span>
-    </div>
-    <div class="slider-group">
-      <label for="rangeEnd">End range:</label>
-      <input type="range" id="rangeEnd" min="10" max="20" value="10">
-      <span id="rangeEndVal">10</span>
-    </div>
-    <div class="slider-group">
-      <label for="targetSum">Target sum:</label>
-      <input type="range" id="targetSum" min="10" max="50" value="10">
-      <span id="targetSumVal">10</span>
+    <button id="solveButton">Solve</button>
+
+    <!-- Awesomeness Toggle -->
+    <div class="awesome-label">
+      <label for="awesomenessToggle">Awesomeness: 5000</label>
+      <input type="checkbox" id="awesomenessToggle">
     </div>
   </div>
-</div>
 
-  <button id="solveButton">Ratkaise</button>
+  <!-- Canvas Section -->
+  <section id="canvasSection">
+    <canvas id="triangleCanvas" width="600" height="400"></canvas>
+    <div id="result"></div>
+  </section>
 
-  <canvas id="triangleCanvas" width="600" height="500"></canvas>
   <div id="wizard"></div>
-  <div id="result"></div>
 
   <audio id="winSound" src="https://cdn.freesound.org/previews/769/769816_12755346-lq.mp3"></audio>
   <audio id="failSound" src="https://cdn.freesound.org/previews/270/270334_5123851-lq.mp3"></audio>
