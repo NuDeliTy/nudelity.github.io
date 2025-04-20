@@ -1,79 +1,58 @@
 body {
   background-color: #111;
   color: #0ff;
-  font-family: 'Courier New', monospace;
+  font-family: 'Courier New', Courier, monospace;
   text-align: center;
-  margin: 0;
-  padding: 0;
+  padding: 20px;
 }
 
 h1 {
-  margin: 20px 0 10px;
-  font-size: 32px;
-  color: #0ff;
-  text-shadow: 0 0 5px #0ff;
+  font-size: 2em;
+  margin-bottom: 20px;
+  text-shadow: 0 0 10px #0ff;
 }
 
-canvas {
-  background-color: #222;
-  border: 2px solid #0ff;
-  margin-top: 20px;
-}
-
-#controls {
+.sliders {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 20px;
-  gap: 20px;
+  gap: 15px;
+  margin-bottom: 20px;
 }
 
 .slider-group {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 10px;
-}
-
-.slider-label {
-  width: 180px;
-  text-align: right;
+  color: #0ff;
 }
 
 input[type="range"] {
-  width: 200px;
+  width: 300px;
+  margin-top: 5px;
 }
 
 button {
-  margin-top: 20px;
-  padding: 10px 20px;
-  background-color: #0ff;
-  color: #111;
+  background: #0ff;
+  color: #000;
   border: none;
-  border-radius: 5px;
-  font-size: 16px;
+  padding: 10px 20px;
+  font-size: 1em;
   cursor: pointer;
-  box-shadow: 0 0 10px #0ff;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  box-shadow: 0 0 15px #0ff;
 }
 
-button:hover {
-  background-color: #0cc;
-}
-
-#result {
-  margin-top: 30px;
-  font-size: 18px;
-  white-space: pre-line;
-  text-align: left;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
-  background-color: #222;
-  padding: 15px;
-  border-radius: 10px;
+canvas {
   border: 1px solid #0ff;
-  box-shadow: 0 0 10px #0ff;
+  background-color: #000;
+  margin-top: 20px;
 }
 
-audio {
-  display: none;
+pre {
+  white-space: pre-wrap;
+  color: #0ff;
+  margin-top: 20px;
+  font-size: 1em;
 }
