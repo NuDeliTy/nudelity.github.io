@@ -136,14 +136,61 @@ function animateWizard(sides) {
   drawStep();
 }
 
-function drawLaser(from, to) {
-  ctx.strokeStyle = '#0ff';
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(from.x, from.y);
-  ctx.lineTo(to.x, to.y);
-  ctx.stroke();
+function drawLaser(fromX, fromY, toX, toY) {
+  const laser = document.createElement('div');
+  laser.classList.add('laser');
+  document.body.appendChild(laser);
+
+  // Position laser at the wizard's position
+  laser.style.left = `${fromX}px`;
+  laser.style.top = `${fromY}px`;
+
+  // Calculate the laser's trajectory to the target point
+  const angle = Math.atan2(toY - fromY, toX - fromX);
+  const distance = Math.sqrt(Math.pow(toX - fromX, 2) + Math.pow(toY - fromY, 2));
+
+  laser.style.width = `${distance}px`;
+  laser.style.transform = `rotate(${angle}rad)`;
+
+  // Animate the laser
+  laser.style.animation = 'zap 1s linear forwards';
+
+  // Cleanup after laser finishes drawing
+  setTimeout(() => {
+    laser.remove();
+  }, 1000);
 }
+
+// Call this function to trigger the laser from wizard to triangle
+function drawLasersFromWizard() {
+  const wizard = document.getElementById('wizard');
+  const wizardX = wizard.offsetLeft + wizard.offsetWidth / 2;
+  const wizardY = wizard.offsetTop + wizard.offsetHeight / 2;
+
+  // Define the points of the triangle
+  const trianglePoints = [
+    { x: canvas.width / 2, y: 50 },
+    { x: 100, y: canvas.height - 100 },
+    { x: canvas.width - 100, y: canvas.height - 100 }
+  ];
+
+  // Draw laser beams to each of the triangle's points
+  trianglePoints.forEach(point => {
+    drawLaser(wizardX, wizardY, point.x, point.y);
+  });
+}
+
+// Run this when the toggle is on
+document.getElementById('awesomenessToggle').addEventListener('change', (e) => {
+  const wizard = document.getElementById('wizard');
+  if (e.target.checked) {
+    wizard.classList.add('active');
+    setTimeout(drawLasersFromWizard, 500); // Give the wizard a bit of time to activate before drawing lasers
+  } else {
+    wizard.classList.remove('active');
+  }
+});
+
 
 function drawTriangle(sides) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
