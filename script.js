@@ -128,13 +128,17 @@ function animateWizard(sides) {
     if (step === 0) drawLaser(points[0].x, points[0].y, points[1].x, points[1].y);
     if (step === 1) drawLaser(points[1].x, points[1].y, points[2].x, points[2].y);
     if (step === 2) drawLaser(points[2].x, points[2].y, points[0].x, points[0].y);
-    if (step === 3) drawTriangle(sides);
+    if (step === 3) {
+      drawTriangle(sides);  // Draw triangle after lasers
+      wizard.classList.remove('active');
+    }
     if (step < 3) step++;
     else wizard.classList.remove('active');
-    if (step <= 3) setTimeout(drawStep, 500);
+    if (step <= 3) setTimeout(drawStep, 500);  // Adjust timing here if necessary
   }
   drawStep();
 }
+
 
 
 function drawLaser(fromX, fromY, toX, toY) {
