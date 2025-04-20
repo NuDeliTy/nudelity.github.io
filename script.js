@@ -6,7 +6,6 @@ const sideSlider = document.getElementById('sideCount');
 const rangeStartSlider = document.getElementById('rangeStart');
 const rangeEndSlider = document.getElementById('rangeEnd');
 const targetSumSlider = document.getElementById('targetSum');
-const awesomeCheckbox = document.getElementById('awesomeCheckbox');
 
 const sideVal = document.getElementById('sideCountVal');
 const rangeStartVal = document.getElementById('rangeStartVal');
@@ -16,6 +15,7 @@ const targetSumVal = document.getElementById('targetSumVal');
 const winSound = document.getElementById('winSound');
 const failSound = document.getElementById('failSound');
 const wizard = document.getElementById('wizard');
+const awesomenessToggle = document.getElementById('awesomenessToggle');
 
 sideSlider.oninput = () => sideVal.textContent = sideSlider.value;
 rangeStartSlider.oninput = () => rangeStartVal.textContent = rangeStartSlider.value;
@@ -85,16 +85,54 @@ function solveTriangle(n, start, end, target) {
 
   if (found) {
     resultDiv.innerText = `🎉 Ratkaisu löytyi!\n\nx = [${solution[0].join(', ')}]\ny = [${solution[1].join(', ')}]\nz = [${solution[2].join(', ')}]`;
-    drawTriangle(solution);
+    animateWizard(solution);
     winSound.play();
-    if (awesomeCheckbox.checked) animateWizard(solution);
   } else {
     resultDiv.innerText = '❌ Ratkaisua ei löytynyt.\nMahdollisia tavoitesummia:';
     drawTriangle();
-    const possibleTargets = calculatePossibleTargets(combinations, n);
+    const possibleTargets = calculateValidTargets(combinations, n);
     possibleTargets.forEach(t => resultDiv.innerText += `\n• ${t}`);
     failSound.play();
+    wizard.classList.remove('active');
   }
+}
+
+function animateWizard(sides) {
+  const showWizard = awesomenessToggle.checked;
+  if (!showWizard) {
+    drawTriangle(sides);
+    return;
+  }
+
+  wizard.classList.add('active');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const [x, y, z] = sides;
+  const points = [
+    { x: canvas.width / 2, y: 50 },
+    { x: 100, y: canvas.height - 100 },
+    { x: canvas.width - 100, y: canvas.height - 100 }
+  ];
+
+  let step = 0;
+  function drawStep() {
+    if (step === 0) drawLaser(points[0], points[1]);
+    if (step === 1) drawLaser(points[1], points[2]);
+    if (step === 2) drawLaser(points[2], points[0]);
+    if (step === 3) drawTriangle(sides);
+    if (step < 3) step++;
+    else wizard.classList.remove('active');
+    if (step <= 3) setTimeout(drawStep, 500);
+  }
+  drawStep();
+}
+
+function drawLaser(from, to) {
+  ctx.strokeStyle = '#0ff';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(from.x, from.y);
+  ctx.lineTo(to.x, to.y);
+  ctx.stroke();
 }
 
 function drawTriangle(sides) {
@@ -144,40 +182,46 @@ function getCombinations(arr, len) {
   return combos;
 }
 
-function calculatePossibleTargets(combos, sideLength) {
+function calculateValidTargets(combos, n) {
   const targets = new Set();
-  combos.forEach(combo => {
-    const sum = combo.reduce((a, b) => a + b, 0);
-    if (combo.length === sideLength) targets.add(sum);
-  });
+  for (let a of combos) {
+    for (let b of combos) {
+      for (let c of combos) {
+        if (a[n - 1] !== b[0]) continue;
+        if (b[n - 1] !== c[0]) continue;
+        if (c[n - 1] !== a[0]) continue;
+
+        const shared = [a[n - 1], b[n - 1], c[n - 1]];
+        const allNumbers = [...a, ...b.slice(1), ...c.slice(1)];
+        const numCounts = {};
+
+        allNumbers.forEach(num => {
+          numCounts[num] = (numCounts[num] || 0) + 1;
+        });
+
+        let valid = true;
+        for (let num in numCounts) {
+          if (shared.includes(Number(num))) {
+            if (numCounts[num] > 2) {
+              valid = false;
+              break;
+            }
+          } else {
+            if (numCounts[num] > 1) {
+              valid = false;
+              break;
+            }
+          }
+        }
+
+        if (valid) {
+          const sum = a.reduce((x, y) => x + y, 0);
+          if (sum === b.reduce((x, y) => x + y, 0) && sum === c.reduce((x, y) => x + y, 0)) {
+            targets.add(sum);
+          }
+        }
+      }
+    }
+  }
   return Array.from(targets).sort((a, b) => a - b);
-}
-
-function animateWizard(solution) {
-  wizard.style.display = 'block';
-  wizard.style.left = '50%';
-  wizard.style.top = '10px';
-
-  const trianglePoints = [
-    { x: canvas.width / 2, y: 50 },
-    { x: 100, y: canvas.height - 100 },
-    { x: canvas.width - 100, y: canvas.height - 100 }
-  ];
-
-  trianglePoints.forEach((point, i) => {
-    setTimeout(() => shootLaser(point.x, point.y), i * 300);
-  });
-
-  setTimeout(() => {
-    wizard.style.display = 'none';
-  }, 3000);
-}
-
-function shootLaser(x, y) {
-  const beam = document.createElement('div');
-  beam.className = 'laser-beam';
-  beam.style.left = `${x}px`;
-  beam.style.top = `${y}px`;
-  document.body.appendChild(beam);
-  setTimeout(() => beam.remove(), 800);
 }
