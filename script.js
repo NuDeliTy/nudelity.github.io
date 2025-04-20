@@ -166,6 +166,7 @@ function drawLaser(fromX, fromY, toX, toY) {
   }, 1000);
 }
 
+
 // Call this function to trigger the laser from wizard to triangle
 function drawLasersFromWizard() {
   const wizard = document.getElementById('wizard');
